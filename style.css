@@ -1,0 +1,699 @@
+/* Reset margin/padding mặc định trình duyệt */
+body, html {
+  margin: 0;
+  width: 100%;
+  padding: 0;
+  touch-action: manipulation; /* Chặn double tap */
+}
+
+/* Đảm bảo phần nội dung chiếm toàn bộ chiều ngang */
+body {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* background: linear-gradient(to bottom, #AAEBF7 0%, white 21.3%, white 80.7%, #AAEBF7 100%);   */
+  padding: 10px;
+  background: #7dd3fc;
+}
+
+/* Nếu có container bao quanh, đảm bảo nó cũng full width */
+#tabs, #tabContents, .menu-bar, .action-buttons {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+
+.menu-bar {
+  background-color: #007acc;
+}
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+.menu > li {
+  position: relative;
+}
+.menu > li > span {
+  display: block;
+  padding: 12px 20px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.menu > li:hover {
+  background-color: #005fa3;
+}
+.menu > li:hover > span {
+  color: white;
+}
+
+.submenu {
+  display: none;
+  position: absolute;
+  background-color: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  top: 100%;
+  left: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  z-index: 999;
+}
+.submenu li {
+  padding: 10px 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  color: black;
+  background-color: #bae6fd;
+}
+.submenu li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Hiển thị submenu khi có class "open" */
+.has-submenu.open .submenu {
+  display: block;
+}
+
+.menu-toggle {
+  display: none;
+  background-color: #007acc;
+  color: white;
+  font-size: 20px;
+  padding: 10px 16px;
+  border: none;
+  width: 100%;
+  text-align: left;
+  border-radius: 6px 6px 0 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .menu-bar {
+    display: none;
+  }
+
+  .menu-bar.open {
+    display: block;
+  }
+
+  .menu {
+    flex-direction: column;
+  }
+
+  .menu > li > span {
+    padding: 14px 16px;
+  }
+
+  .submenu {
+    position: relative;
+    box-shadow: none;
+  }
+
+  .submenu li {
+    padding-left: 30px;
+  }
+}
+
+/* Cho phép bảng cuộn ngang trên màn hình nhỏ */
+table {
+  overflow-x: auto;
+  display: block;
+  width: 100%;
+}
+
+/* Tab button tên lớp */
+#tabs {
+  display: flex;
+  justify-content: center;  /* ✅ Căn giữa ngang */
+  flex-wrap: wrap;
+  gap: 8px 0 0 0;
+  margin: 0;
+}
+
+.tab-button {
+  padding: 10px 16px;
+  margin: 10px 5px 0 5px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 10px; /* ✅ Thêm dòng này */
+  display: inline-block;
+}
+
+.tab-button:hover {
+  background-color: #e0e0e0;
+}
+
+.tab-button.active {
+  border: 1px solid white;
+  font-weight: bold;
+  background-color: #3b82f6;
+  box-shadow: 0 0 0 5px #3b83f65f;
+  color: #fff;
+}
+
+
+/* 2 nút Điểm danh và Thu học phí */
+.action-buttons {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #f8f8f8;
+  border-bottom: 1px solid white;  
+}
+
+.action-buttons button {
+  flex: 1;                     /* ✅ Tự dãn đều */
+  min-width: 120px;            /* ✅ Đảm bảo không quá nhỏ */
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #0f988e;
+  font-family: "Istok Web", sans-serif;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 120px;
+  height: 40px;
+  text-transform: uppercase;
+  font-weight: normal;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  transform: translateY(0px);
+  position: relative;
+  box-shadow:
+    inset 0 30px 30px -15px rgba(255, 255, 255, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+    inset 0 1px 20px rgba(0, 0, 0, 0),
+    0 3px 0 #0f988e,
+    0 3px 2px rgba(0, 0, 0, 0.2),
+    0 5px 10px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.1);
+  background: #15ccbe;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: 150ms all ease-in-out;
+}
+
+
+.action-buttons button:hover {
+  background-color: #0f988e;
+}
+
+
+/* Mặc định submenu ẩn + hiệu ứng mượt */
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background-color: white;
+  border: 1px solid #ddd;
+}
+
+/* Khi mở, trượt xuống */
+.has-submenu.open .submenu {
+  max-height: 300px; /* tùy theo số dòng */
+}
+
+/* Hiển thị menu */
+.submenu li {
+  padding: 10px 20px 10px 40px;
+  cursor: pointer;
+  color: black;
+  white-space: nowrap;
+}
+.submenu li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Giao diện bảng */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 15px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+thead tr {
+  background-color: #007acc;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f0faff;
+}
+
+
+/* Form */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #bae6fd;
+  padding: 20px 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  text-align: center;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  padding: 12px 0;
+  border-radius: 10px;
+  background-color: #0ea5e9;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+}
+
+
+
+
+.modal-content label {
+  display: block;
+  margin: 12px 0 12px;
+}
+
+.modal-content input:not([type="date"]) {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 0;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+.modal-content input[type="date"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 0;
+  font-size: 18px;
+  font-family: inherit;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 0;
+  font-size: 20px;
+  font-family: inherit;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+  margin: 0 5px;
+  margin-top: 10px;
+  padding: 10px;
+  background: #24b4fb;
+  font-size: 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #0071e2;
+  font-family: "Istok Web", sans-serif;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 120px;
+  height: 40px;
+  text-transform: uppercase;
+  font-weight: normal;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  transform: translateY(0px);
+  position: relative;
+  box-shadow:
+    inset 0 30px 30px -15px rgba(255, 255, 255, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+    inset 0 1px 20px rgba(0, 0, 0, 0),
+    0 3px 0 #0071e2,
+    0 3px 2px rgba(0, 0, 0, 0.2),
+    0 5px 10px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.1);
+
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: 150ms all ease-in-out;
+}
+
+.modal-actions button:hover {
+  background: #0071e2;
+}
+
+.modal-actions .btn-boqua {
+  font-size: 14px;
+}
+
+/* 🎨 Nút Huỷ */
+.modal-actions .btn-cancel {
+  color: #1f2937;
+  text-shadow: 0 1px 2px #ffffff;
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e0aa2d;
+  font-family: "Istok Web", sans-serif;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 120px;
+  height: 40px;
+  text-transform: uppercase;
+  font-weight: normal;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  transform: translateY(0px);
+  position: relative;
+  box-shadow:
+    inset 0 30px 30px -15px rgba(255, 255, 255, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+    inset 0 1px 20px rgba(0, 0, 0, 0),
+    0 3px 0 #e0aa2d,
+    0 3px 2px rgba(0, 0, 0, 0.2),
+    0 5px 10px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.1);
+  background: #F7BE38 ;
+  transition: 150ms all ease-in-out;
+}
+
+.modal-actions .btn-cancel:hover {
+  background-color: #e0aa2d;
+}
+
+/* Phần thống kê thu học phí */
+.thongke-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  font-family: sans-serif;
+  margin-top: 20px;
+}
+
+.thongke-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ⬇️ Đảm bảo cả 2 nút có cùng kích thước */
+.same-width {
+  width: 100%;
+  max-width: 120px; /* hoặc tùy theo nội dung dài nhất */
+}
+
+.thongke-button {
+  padding: 5px 10px;
+  text-align: left;
+  border: 1px solid white;
+  background: #007acc;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.thongke-button:hover {
+  background-color: #005fa3;
+}
+
+.thongke-info {
+  font-size: 16px;
+  color: #333;
+}
+
+/* Progress bar */
+.progress-wrapper {
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: -30px;
+}
+
+.progress-bar-bg {
+  background: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 10px;
+}
+
+.progress-bar-fill {
+  background: #4caf50;
+  width: 0%;
+  height: 100%;
+  transition: width 0.5s;
+}
+
+.bubble-progress-container {
+  position: relative;
+  height: 40px;
+  margin-top: 6px;
+}
+
+.percent-label {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Đổ bóng chữ nhẹ nếu muốn */
+}
+
+.percent-label::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #1C8139; /* Màu giống chữ hoặc tuỳ bạn */
+}
+
+.percent-label.full {
+  color: #e53935;
+  text-shadow:
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px  1px 0 white,
+    1px  1px 0 white,
+    0px -1px 0 white,
+    0px  1px 0 white,
+    -1px  0px 0 white,
+    1px  0px 0 white;
+}
+
+.percent-label.full::after {
+  border-top-color: #e53935;
+}
+
+/* Bật tắt nút Đã Thu - Chưa Thu */
+.thongke-button.active {
+  border: 1px solid white;
+  font-weight: bold;
+  background-color: #3b82f6;
+  box-shadow: 0 0 0 5px #3b83f65f;
+  color: #fff;
+}
+
+/* Tô sáng ô điểm danh */
+.just-updated {
+  animation: rowFlash 1s ease-in-out;
+}
+
+@keyframes rowFlash {
+  0%   { background-color: #fff8b3; }
+  50%  { background-color: #fff0a0; }
+  100% { background-color: inherit; }
+}
+
+/* Tô sáng học sinh vừa bị bỏ qua */
+.just-skipped {
+  animation: rowFlashSkipped 1s ease-in-out;
+}
+
+@keyframes rowFlashSkipped {
+  0%   { background-color: #ffd6d6; }  /* đỏ nhạt */
+  50%  { background-color: #ffcaca; }
+  100% { background-color: inherit; }
+}
+
+
+
+/* Button trang Lịch sử thu học phí */ 
+.button-lichsuthuhocphi {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 15px;
+  background-color: #007ACC;
+  border-radius: 5px;
+  border: 1px solid white;
+  cursor: pointer;
+  transition: 400ms;
+}
+
+.button-lichsuthuhocphi .tai_lai {
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  transition: 400ms;
+}
+
+.button-lichsuthuhocphi:active {
+  background-color: white;
+}
+
+.button-lichsuthuhocphi:active .text {
+  color: #007ACC;
+}
+
+
+/* Search box lịch sử thu học phí */
+.search-container {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+
+.search-box {
+  display: flex;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  padding: 6px;
+  width: 100%;
+  max-width: 500px;
+  align-items: center;
+}
+
+.search-icon {
+  background-color: white;
+  padding: 8px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #ccc;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+}
+
+.search-button {
+  background-color: #007acc;
+  color: white;
+  border: none;
+  padding: 9px 14px;
+  margin-left: 8px;
+  font-weight: bold;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #005fa3;
+}
+
+
+
+.status-bar-thuhocphi {
+  border-top: 1px solid gray;
+  padding: 8px 8px 0px 8px;
+  margin-top: 26px;
+  font-size: 14px;
+  color: black;
+  text-align: center;
+}
+
+/* Giảm cỡ chữ 2 nút Thu học phí và Điểm danh trên thiết bị màn hình nhỏ */
+@media (max-width: 390px) {
+  .action-buttons button {
+    font-size: 14px;
+  }
+
+  .modal-actions .btn-boqua {
+    font-size: 12px;
+  }
+
+  .search-button {
+  padding: 8px 8px;
+  margin-left: 8px;
+  }
+}

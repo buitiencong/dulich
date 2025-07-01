@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản Lý Du lịch</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Quản Lý Du lịch">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+  <script defer src="app.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;}
+    .tab-content { display: none; margin-top: 20px; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+    <button id="menuToggle" class="menu-toggle">☰ Menu quản lý 
+        <svg xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            width="1em"
+            height="1em"
+            style="vertical-align: middle; margin-left: 4px;">
+            <path d="M12 15.6315L20.9679 10.8838L20.0321 9.11619L12 13.3685L3.9679 9.11619L3.03212 10.8838L12 15.6315Z"></path>
+        </svg>
+    </button>
+    <nav class="menu-bar">
+        <ul class="menu">
+            <li class="has-submenu">
+            <span onclick="toggleSubmenu(this)">📚 Tour
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="1em"
+                    height="1em"
+                    style="vertical-align: middle; margin-left: 4px;">
+                    <path d="M12 15.6315L20.9679 10.8838L20.0321 9.11619L12 13.3685L3.9679 9.11619L3.03212 10.8838L12 15.6315Z"></path>
+                </svg>
+            </span>
+            <ul class="submenu">
+                <li onclick="handleThemTour()">🏫 Thêm Tour</li>
+                <li onclick="handleSuaTour()">🛠️ Sửa thông tin Tour</li>
+                <li onclick="handleXoaTour()">🗑️ Xóa Tour</li>
+            </ul>
+            </li>
+            <li class="has-submenu">
+            <span onclick="toggleSubmenu(this)">💁‍♂️ Thành viên 
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="1em"
+                    height="1em"
+                    style="vertical-align: middle; margin-left: 4px;">
+                    <path d="M12 15.6315L20.9679 10.8838L20.0321 9.11619L12 13.3685L3.9679 9.11619L3.03212 10.8838L12 15.6315Z"></path>
+                </svg>
+            </span>
+            <ul class="submenu">
+                <li onclick="handleThemThanhVien()">🙆‍♂️ Thêm thành viên</li>
+                <li onclick="handleSuaThanhVien()">✍️ Sửa thông tin thành viên</li>
+                <li onclick="handleXoaThanhVien()">🙅‍♂️ Xóa thành viên</li>
+            </ul>
+            </li>
+            <li onclick="handleSuaNgay()"><span>📆 Sửa ngày điểm danh</span></li>
+            <li onclick="location.href='thuhocphi.html'"><span>📊 Lịch sử thu học phí</span></li>
+            <li class="has-submenu">
+            <span onclick="toggleSubmenu(this)">💾 Cơ sở dữ liệu
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="1em"
+                    height="1em"
+                    style="vertical-align: middle; margin-left: 4px;">
+                    <path d="M12 15.6315L20.9679 10.8838L20.0321 9.11619L12 13.3685L3.9679 9.11619L3.03212 10.8838L12 15.6315Z"></path>
+                </svg>
+            </span>
+            <ul class="submenu">
+                <li onclick="openDbModal()">⚙️ Phục hồi file dữ liệu</li>
+                <li onclick="exportSQLite()">📦 Sao lưu file dữ liệu</li>
+            </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="action-buttons">   
+        <button onclick="handleThu()">💰 Thu</button>
+        <button onclick="handleChi()">📅 Chi</button>
+    </div>
+
+
+<!-- Form Chọn file dữ liệu -->
+<div id="dbModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h3>⚙️ Phục hồi file dữ liệu</h3>
+
+    <!-- 🔲 Khung chứa 2 phần -->
+
+    <div>
+      <h4 style="margin-top: 5px;">📂 Chọn file dữ liệu thay thế (.db)</h4>
+      <input type="file" id="dbfile" accept=".db,.sqlite" required />
+    </div>
+    <div class="modal-actions">
+    <button class="btn-cancel" onclick="closeDbModal()">🔙 Huỷ</button>
+    </div>
+  </div>
+</div>
+
+
+  <div id="tabs"></div>
+  <div id="tabContents"></div>
+
+  <!-- Form điểm danh (ẩn ban đầu) -->
+  <div id="chiModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>📅 Khoản chi</h3>
+
+      <label>Ngày:
+        <input type="date" id="dd-date" />
+      </label>
+
+      <label>Lớp:
+        <select id="dd-class" onchange="loadStudentsForClass()"></select>
+      </label>
+
+      <label>Họ và tên:
+        <select id="dd-student"></select>
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitDiemDanh(1)">🟢 Có</button>
+        <button onclick="submitDiemDanh(0)">❌ Nghỉ</button>
+        <button class="btn-cancel" onclick="closeDiemDanh()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Form Thêm Tour -->
+  <div id="themTourModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>🌍 Thêm Tour</h3>
+
+      <label style="color: #ff0000;">Tên tour: *
+        <input type="text" id="tour-ten" required />
+      </label>
+
+      <label>Ngày đi: *
+        <input type="date" id="tour-ngay-di" />
+      </label>
+
+      <label>Ngày về: *
+        <input type="date" id="tour-ngay-ve" />
+      </label>
+
+      <label>Địa điểm:
+        <input type="text" id="tour-diadiem" />
+      </label>
+
+      <label>Ghi chú:
+        <textarea id="tour-ghichu" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+      </label>
+
+      <div style="margin-top: 10px;">
+        <label style="display: block; margin-bottom: 6px;">
+          Sao chép danh sách thành viên từ tour khác:
+        </label>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <select id="tour-copy-select" disabled style="flex: 1; padding: 6px; font-size: 18px;">
+            <option value="">-- Chọn tour để sao chép --</option>
+          </select>
+
+          <input type="checkbox" id="tour-copy-checkbox" onchange="toggleCopyFromTour()" title="Cho phép sao chép"
+            style="width: 20px; height: 20px; flex-shrink: 0;" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button onclick="submitThemTour()">➕ Lưu</button>
+        <button class="btn-cancel" onclick="closeThemTour()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Form Sửa Tour -->
+  <div id="suaTourModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>🛠️ Sửa thông tin Tour</h3>
+
+      <label>Chọn tour:
+        <select id="edit-tour-select" onchange="loadTourInfoToForm()"></select>
+      </label>
+
+      <label>Tên tour:
+        <input type="text" id="edit-ten-tour" />
+      </label>
+
+      <label>Ngày đi:
+        <input type="date" id="edit-ngay-di" />
+      </label>
+
+      <label>Ngày về:
+        <input type="date" id="edit-ngay-ve" />
+      </label>
+
+      <label>Địa điểm:
+        <input type="text" id="edit-diadiem-tour" />
+      </label>
+
+      <label>Ghi chú:
+        <textarea id="edit-ghichu-tour" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitSuaTour()">🛠️ Cập nhật</button>
+        <button class="btn-cancel" onclick="closeSuaTour()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- Form Xóa Tour -->
+  <div id="xoaTourModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>🗑️ Xóa Tour</h3>
+
+      <label>Chọn tour cần xóa:
+        <select id="xoa-tour-select" onchange="switchTab(this.value)"></select>
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitXoaTour()">🗑️ Xóa</button>
+        <button class="btn-cancel" onclick="closeXoaTour()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Form Thêm Thành viên -->
+  <div id="themTvModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>🙆‍♂️ Thêm thành viên</h3>
+
+      <label>Chọn tour:
+        <select id="tv-tour-select" onchange="onChangeTourInThemTv()"></select>
+      </label>
+
+      <label>Họ và tên thành viên:
+        <input type="text" id="tv-ten" placeholder="Nguyễn Văn A" />
+      </label>
+
+      <label>Số điện thoại:
+        <input type="text" id="tv-sdt" placeholder="0978xxxxxx" />
+      </label>
+
+      <label>Tỉ lệ đóng góp (%):
+        <input type="number" id="tv-tyle" placeholder="100" min="0" max="100" value="100" />
+      </label>
+
+      <label>Ghi chú:
+        <textarea id="tv-ghichu" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitThemThanhVien()">➕ Lưu</button>
+        <button class="btn-cancel" onclick="closeThemThanhVien()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Form Sửa Thành viên -->
+  <div id="suaTvModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>✍️ Sửa thông tin thành viên</h3>
+
+      <label>Chọn tour:
+        <select id="edit-tv-tour" onchange="loadThanhVienForEdit(); onChangeTourInSuaTv();"></select>
+      </label>
+
+      <label>Chọn thành viên:
+        <select id="edit-tv-select" onchange="fillOldThanhVienInfo()"></select>
+      </label>
+
+      <label>Họ và tên:
+        <input type="text" id="edit-tv-name" placeholder="Nhập tên mới..." />
+      </label>
+
+      <label>Số điện thoại:
+        <input type="text" id="edit-tv-sdt" placeholder="0978xxxxxx" />
+      </label>
+
+      <label>Tỉ lệ đóng góp (%):
+        <input type="number" id="edit-tv-tyle" min="0" max="100" />
+      </label>
+
+      <label>Ghi chú:
+        <textarea id="edit-tv-ghichu" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitSuaThanhVien()">✍️ Cập nhật</button>
+        <button class="btn-cancel" onclick="closeSuaThanhVien()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Form Xóa Thành viên -->
+  <div id="xoaTvModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>🙅‍♂️ Xóa thành viên</h3>
+
+      <label>Chọn tour:
+        <select id="xoa-tv-tour" onchange="loadThanhVienForXoa(); onChangeTourInXoaTv();"></select>
+      </label>
+
+      <label>Chọn thành viên:
+        <select id="xoa-tv-select"></select>
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitXoaThanhVien()">🗑️ Xóa</button>
+        <button class="btn-cancel" onclick="closeXoaThanhVien()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Form Sửa ngày điểm danh -->
+  <div id="suaNgayModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>📆 Sửa ngày điểm danh</h3>
+
+      <label>Chọn lớp:
+        <select id="sua-ngay-class" onchange="loadDatesForClass()"></select>
+      </label>
+
+      <label>Chọn ngày cần sửa:
+        <select id="sua-ngay-cu"></select>
+      </label>
+
+      <label>Ngày mới:
+        <input type="date" id="sua-ngay-moi" />
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitSuaNgay()">✏️ Sửa</button>
+        <button onclick="submitXoaNgay()">🗑️ Xóa</button>
+        <button class="btn-cancel" onclick="closeSuaNgay()">🔙 Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Khung theo dõi thu học phí -->
+  <div id="hophithongke">
+    <div class="thongke-container">
+
+      <!-- Hàng "Đã thu" -->
+      <div class="thongke-row">
+        <button id="btn-dathu" class="thongke-button same-width">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up-icon lucide-thumbs-up"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+          <span style="padding-left: 6px;">Đã thu</span></button>
+        <div class="thongke-info">
+          <span id="count-dathu">0</span> học sinh – Số tiền: <span id="sum-dathu">0 đ</span>
+        </div>
+      </div>
+
+      <!-- Hàng "Chưa thu" -->
+      <div class="thongke-row">
+        <button id="btn-chuathu" class="thongke-button same-width">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-down-icon lucide-thumbs-down"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>
+          <span style="padding-left: 6px;">Chưa thu</span></button>
+        <div class="thongke-info">
+          <span id="count-chuathu">0</span> học sinh – Số tiền: <span id="sum-chuathu">0 đ</span>
+        </div>
+      </div>
+
+      <!-- Thanh progress bar -->
+      <div class="progress-wrapper">
+        <div class="bubble-progress-container">
+          <div class="percent-label" id="progress-label">%</div>
+          <div class="progress-bar-bg">
+            <div id="progress-bar" class="progress-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Form Thu học phí -->
+  <div id="thuModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>💰 Thu học phí</h3>
+
+      <label>Chọn lớp:
+        <select id="thu-class" onchange="onChangeClassInThu()"></select>
+      </label>
+
+      <label>Chọn học sinh:
+        <select id="thu-student" onchange="updateTienThuHocPhi()"></select>
+      </label>
+
+      <label>Số tiền cần thu:
+        <input type="text" id="thu-money" readonly />
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitThuHocPhi()">🤑 Thu</button>
+        <button class="btn-boqua" onclick="skipThuHocPhi()">⏭ Bỏ qua</button>
+        <button class="btn-cancel" onclick="closeThuHocPhi()">🔙 Huỷ</button>
+      </div>
+
+      <div class="status-bar-thuhocphi">
+        Thu học phí khi kết thúc lớp học.<br/>
+        Sau đó cần tạo lớp học mới.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Form Hướng dẫn back up -->
+  <div id="backupModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>📦 Hướng dẫn sao lưu</h3>
+      <p>
+        Chọn <b>Lưu vào Tệp
+          <span style="display:inline-block; vertical-align:middle; margin-left:6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-folder-closed-icon lucide-folder-closed">
+              <path
+                d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+              <path d="M2 10h20" />
+            </svg>
+          </span>
+        </b>
+        ➔ Chọn vị trí và bấm <b><span style="color: #0051ff;">Lưu</span></b>
+      </p>
+      <div class="modal-actions">
+        <button onclick="closeBackupModal(true)">Tiếp tục</button>
+        <button class="btn-cancel" onclick="closeBackupModal(false)">Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Form hướng dẫn thêm ứng dụng vào màn hình chính -->
+  <div id="addtoscreenios" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="font-size: 18px;">
+      <h3>📲 Hướng dẫn thêm ứng dụng <br> vào màn hình chính</h3>
+      <span style="margin-left: 30px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin: 0 6px;">
+        <path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+      </svg>
+      Chia sẻ</span><br>
+      <span style="margin-left: 30px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin: 0 6px;">
+        <rect width="18" height="18" x="3" y="3" rx="2"/>
+        <path d="M8 12h8"/><path d="M12 8v8"/>
+      </svg>
+      Thêm vào Màn hình chính
+      </span>
+      <div class="modal-actions">
+        <button onclick="closeAddToScreenModal(true)">Đã hiểu</button>
+        <button class="btn-cancel" onclick="closeAddToScreenModal(false)">Huỷ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="addtoscreenadr" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="font-size: 18px;">
+      <h3>📲 Thêm ứng dụng <br> vào màn hình chính</h3>
+      <span>Sau khi bấm Thêm hãy sử dụng ứng dụng tại màn hình chính</span>      
+      <div class="modal-actions">
+        <button onclick="closeAddToScreenModal(true)">Thêm</button>
+        <button class="btn-cancel" onclick="closeAddToScreenModal(false)">Huỷ</button>
+      </div>
+    </div>
+  </div>  
+
+
+  <footer style="text-align: center; font-size: 14px; color: #333; padding: 10px 0 5px;">
+    <hr style="border: none; border-top: 1px solid gray; margin-bottom: 10px;" />
+    © 06/2025<strong> Bùi Tiến Công</strong> – buitiencong@gmail.com
+  </footer>
+
+</body>
+</html>

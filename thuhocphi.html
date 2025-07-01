@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lịch sử thu học phí</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+ <h2 style="text-align: center; text-shadow: 0 1px 2px #ffffff;">📊 Lịch sử thu học phí</h2>
+
+    <!-- 🔍 Khối tìm kiếm (chia đôi theo chiều ngang) -->
+<div style="
+  border: 1px solid white;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+">
+
+  <!-- 🔍 Tìm theo tên -->
+<div class="search-container" style="margin-top: -10px; margin-bottom: -10px;">
+  <div class="search-box">
+    
+    <!-- icon kính lúp -->
+    <div class="search-icon">
+      <svg viewBox="0 0 20 20" width="20" height="20" fill="#666">
+        <path d="M16.72 17.78a.75.75 0 1 0 1.06-1.06l-1.06 1.06ZM9 14.5A5.5 5.5 0 0 1 3.5 9H2a7 7 0 0 0 7 7v-1.5ZM3.5 9A5.5 5.5 0 0 1 9 3.5V2a7 7 0 0 0-7 7h1.5ZM9 3.5A5.5 5.5 0 0 1 14.5 9H16a7 7 0 0 0-7-7v1.5Zm3.89 10.45 3.83 3.83 1.06-1.06-3.83-3.83-1.06 1.06ZM14.5 9a5.48 5.48 0 0 1-1.61 3.89l1.06 1.06A6.98 6.98 0 0 0 16 9h-1.5Zm-1.61 3.89A5.48 5.48 0 0 1 9 14.5V16a6.98 6.98 0 0 0 4.95-2.05l-1.06-1.06Z"/>
+      </svg>
+    </div>
+
+    <!-- ô nhập -->
+    <input
+      type="text"
+      id="search-name"
+      placeholder="Nhập tên học sinh..."
+      class="search-input"
+    />
+
+    <!-- nút tìm -->
+    <input
+      type="button"
+      value="Tìm"
+      id="search-btn"
+      onclick="handleSearchClick()"
+      class="search-button"
+    />
+    
+  </div>
+</div>
+
+
+  <!-- Đường chia ngang -->
+  <div style="height: 1px; background-color: white; margin: 0 -16px;"></div>
+
+  <!-- 📅 Tìm theo ngày -->
+  <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: stretch; font-size: 16px;">
+    <!-- Cột trái: input ngày -->
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 200px; margin-right: 8px;">
+      <div style="display: grid; grid-template-columns: 70px 1fr; align-items: center; column-gap: 6px;">
+        <span>📅 Từ:</span>
+        <input type="date" id="start-date" style="font-size: 18px; padding: 6px; width: 100%;" />
+      </div>
+      <div style="display: grid; grid-template-columns: 70px 1fr; align-items: center; column-gap: 6px;">
+        <span>📅 Đến:</span>
+        <input type="date" id="end-date" style="font-size: 18px; padding: 6px; width: 100%;" />
+      </div>
+    </div>
+
+    <!-- Cột phải: nút Lọc -->
+    <div style="display: flex; justify-content: flex-end; align-items: center; min-width: 80px; flex-shrink: 0;">
+      <button class="button-lichsuthuhocphi" onclick="searchByDate()">
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+
+
+<div style="display: flex; justify-content: center; margin-bottom: 16px;">
+  <button class="button-lichsuthuhocphi" onclick="loadPaymentHistory()">
+    <span class="tai_lai" style="width: 100px;">🔄 Tải lại</span>
+  </button>
+</div>
+
+
+
+
+
+
+  <table id="paymentTable" border="1" style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Ngày</th>
+        <th>Họ và tên</th>
+        <th>Lớp</th>
+        <th>Số tiền</th>
+        <th>Xoá</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="thuhocphi.js"></script>
+</body>
+</html>
