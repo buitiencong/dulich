@@ -756,13 +756,8 @@ tr:nth-child(even) {
 [id^="table-tab-3"]:checked ~ label[for^="table-tab-3"] {
   opacity: 1;
   font-weight: bold;
+  transform: translateY(-2px); /* ⬆️ nhảy lên */
 }
-
-
-.table-tab-label {
-  background: rgba(0, 255, 0, 0.1); /* test căn giữa */
-}
-
 
 
 .table-tab-indicator {
