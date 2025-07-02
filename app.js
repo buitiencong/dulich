@@ -222,22 +222,24 @@ function checkIfNoTours() {
     const count = result[0]?.values[0][0] || 0;
 
     if (count === 0) {
-      // Nếu intro chưa đóng thì chờ rồi gọi lại sau
       if (!isIntroClosed) {
         window._pendingInitAfterIntro = () => checkIfNoTours();
         return;
       }
 
-      // Chỉ hiển thị sau khi intro đã đóng
+      // ✅ Hiển thị Toast → chờ Toast biến mất mới mở form
+      showToast("🧭 Chưa có tour nào được tạo.<br>Hãy tạo tour mới để bắt đầu.", '', true);
+
+      // ⏳ Delay mở form sau Toast (mặc định Toast biến mất sau 3s hoặc 10s)
       setTimeout(() => {
-        showToast("🧭 Chưa có tour nào được tạo.<br>Hãy tạo tour mới để bắt đầu.", '', true);
         handleThemTour();
-      }, 300);
+      }, 3000); // hoặc 10000 nếu bạn muốn chờ toast biến mất hoàn toàn
     }
   } catch (err) {
     console.error("Lỗi khi kiểm tra tour:", err.message);
   }
 }
+
 
 
 // Load danh sách Tour vào Tab
