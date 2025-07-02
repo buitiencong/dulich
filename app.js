@@ -124,12 +124,9 @@ function initNewDatabase() {
       ct_thoi_gian DATETIME NOT NULL,
       ct_ten_khoan TEXT NOT NULL,
       ct_so_tien INTEGER NOT NULL,
-      ct_quy_chung BOOLEAN DEFAULT 1,
-      ct_nguoi_ung_id INTEGER,
       ct_danh_muc_id INTEGER, -- 🔥 Mới thêm
       ct_ghi_chu TEXT,
       FOREIGN KEY (ct_tour_id) REFERENCES Tour(tour_id),
-      FOREIGN KEY (ct_nguoi_ung_id) REFERENCES ThanhVien(tv_id),
       FOREIGN KEY (ct_danh_muc_id) REFERENCES DanhMuc(dm_id)
     );
 
@@ -312,13 +309,13 @@ function showTourData(tourId) {
   let infoDiv = null;
   try {
     const tourInfo = db.exec(`
-      SELECT tour_ten, tour_dia_diem, tour_ngay_di, tour_ngay_ve
+      SELECT tour_ten, tour_dia_diem, tour_ngay_di, tour_ngay_ve, tour_mo_ta
       FROM Tour
       WHERE tour_id = ${tourId}
     `);
 
     if (tourInfo.length > 0) {
-      const [ten, dia_diem, ngay_di, ngay_ve] = tourInfo[0].values[0];
+      const [ten, dia_diem, ngay_di, ngay_ve, ghi_chu] = tourInfo[0].values[0];
 
       infoDiv = document.createElement("div");
       infoDiv.style.cssText = `
@@ -330,8 +327,11 @@ function showTourData(tourId) {
         border-radius: 6px;
         text-align: center;
       `;
-      infoDiv.textContent =
-        `🧳 Tour: ${ten} – Địa điểm: ${dia_diem || "…"} – Từ ${ngay_di} đến ${ngay_ve}`;
+
+      infoDiv.innerHTML = `
+        🧳 Tour: <b>${ten}</b> – 📍 ${dia_diem || "…"} – 📅 ${ngay_di} đến ${ngay_ve}
+        ${ghi_chu ? `<br>📝 <i>${ghi_chu}</i>` : ""}
+      `;
     }
   } catch (err) {
     console.error("Lỗi lấy thông tin tour:", err.message);
@@ -392,62 +392,99 @@ function showTourData(tourId) {
   container.insertBefore(tabBar, contentSections[0]);
 
   // ✅ Tab 1: Thành viên
-  try {
-    const res = db.exec(`
-      SELECT tv_id, tv_ho_ten, tv_sdt, tv_ty_le_dong
-      FROM ThanhVien
-      WHERE tv_tour_id = ${tourId}
-    `);
-    const members = res[0]?.values || [];
+// ✅ Tab 1: Thành viên
+// ✅ Tab 1: Thành viên
+try {
+  const res = db.exec(`
+    SELECT tv_id, tv_ho_ten, tv_sdt, tv_ty_le_dong, tv_gioi_tinh
+    FROM ThanhVien
+    WHERE tv_tour_id = ${tourId}
+  `);
+  const members = res[0]?.values || [];
 
-    const dongGopMap = {};
-    const gopRes = db.exec(`
-      SELECT dg_tv_id, SUM(dg_so_tien)
-      FROM DongGop
-      WHERE dg_tour_id = ${tourId}
-      GROUP BY dg_tv_id
-    `);
-    gopRes[0]?.values.forEach(([id, sum]) => {
-      dongGopMap[id] = sum;
-    });
+  const sumTyle = members.reduce((sum, m) => sum + (m[3] || 0), 0);
 
-    const table1 = document.createElement("table");
-    table1.border = "1";
-    table1.cellPadding = "5";
-    table1.style.cssText = "border-collapse: collapse; width: 100%;";
+  const dongGopMap = {};
+  const gopRes = db.exec(`
+    SELECT dg_tv_id, SUM(dg_so_tien)
+    FROM DongGop
+    WHERE dg_tour_id = ${tourId}
+    GROUP BY dg_tv_id
+  `);
+  gopRes[0]?.values.forEach(([id, sum]) => {
+    dongGopMap[id] = sum;
+  });
 
-    table1.innerHTML = `
-      <thead>
-        <tr style="background:#f0f0f0;">
-          <th>STT</th>
-          <th>Họ và tên</th>
-          <th>SĐT</th>
-          <th>Tỉ lệ đóng</th>
-          <th>Đã đóng</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${members.map(([id, name, sdt, tyle], i) => `
+  const chiRes = db.exec(`
+    SELECT SUM(ct_so_tien)
+    FROM ChiTieu
+    WHERE ct_tour_id = ${tourId}
+  `);
+  const tongChiTieu = chiRes[0]?.values[0][0] || 0;
+
+  // ✅ Hàm làm tròn số về bội số gần nhất của 1000
+  const lamTronNgan = (x) => x >= 0
+    ? Math.floor(x / 1000) * 1000
+    : Math.ceil(x / 1000) * 1000;
+
+  const table1 = document.createElement("table");
+  table1.border = "1";
+  table1.cellPadding = "5";
+  table1.style.cssText = "border-collapse: collapse; width: 100%;";
+
+  table1.innerHTML = `
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th></th>
+        <th>Họ và tên</th>
+        <th>SĐT</th>
+        <th>Tỉ lệ đóng</th>
+        <th>Đã đóng</th>
+        <th>Tổng kết</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${members.map(([id, name, sdt, tyle, gioi], i) => {
+        const gioiIcon = {
+          nam: "👨", nu: "👩", be_nam: "👦", be_nu: "👧"
+        }[gioi] || "❓";
+
+        const tyLeDong = tyle || 0;
+        const daDong = dongGopMap[id] || 0;
+        const chiPhaiDong = sumTyle > 0 ? tongChiTieu * (tyLeDong / sumTyle) : 0;
+        const chenhLechRaw = daDong - chiPhaiDong;
+        const chenhLech = lamTronNgan(chenhLechRaw);
+
+        return `
           <tr>
             <td style="text-align:center">${i + 1}</td>
+            <td style="text-align:center">${gioiIcon}</td>
             <td>${name}</td>
             <td>${sdt || ""}</td>
-            <td style="text-align:center">${(tyle * 100).toFixed(0)}%</td>
-            <td style="text-align:right">${(dongGopMap[id] || 0).toLocaleString()} ₫</td>
+            <td style="text-align:center">${(tyLeDong * 100).toFixed(0)}%</td>
+            <td style="text-align:right">${daDong.toLocaleString()} ₫</td>
+            <td style="text-align:right; color: ${chenhLech >= 0 ? "green" : "red"};">
+              ${chenhLech >= 0 ? "+" : ""}${chenhLech.toLocaleString()} ₫
+            </td>
           </tr>
-        `).join("")}
-      </tbody>
-    `;
-    contentSections[0].appendChild(table1);
-  } catch (err) {
-    contentSections[0].innerHTML = `<p style="color:red">Lỗi tải thành viên: ${err.message}</p>`;
-  }
+        `;
+      }).join("")}
+    </tbody>
+  `;
+  contentSections[0].appendChild(table1);
+} catch (err) {
+  contentSections[0].innerHTML = `<p style="color:red">Lỗi tải thành viên: ${err.message}</p>`;
+}
+
+
+
 
 
   // ✅ Tab 2: Chi tiêu
   try {
     const res = db.exec(`
-      SELECT ct_thoi_gian, ct_ten_khoan, ct_so_tien, ct_quy_chung, dm.dm_ten
+      SELECT ct_thoi_gian, ct_ten_khoan, ct_so_tien, dm.dm_ten
       FROM ChiTieu
       LEFT JOIN DanhMuc dm ON dm.dm_id = ChiTieu.ct_danh_muc_id
       WHERE ct_tour_id = ${tourId}
@@ -462,31 +499,29 @@ function showTourData(tourId) {
 
     table2.innerHTML = `
       <thead>
-        <tr style="background:#f0f0f0;">
+        <tr>
           <th>STT</th>
           <th>Thời gian</th>
-          <th>Tên khoản chi</th>
-          <th>Mục chi</th>
+          <th>Tên khoản</th>
+          <th>Danh mục</th>
           <th>Số tiền</th>
-          <th>Nguồn chi</th>
+          <th>Ghi chú</th>
         </tr>
       </thead>
       <tbody>
-        ${chiTieu.map(([thoigian, ten, tien, quyChung, mucChi], i) => {
-          const nguon = (quyChung === 1 || quyChung === true) ? "Quỹ chung" : "Ứng trước";
-          return `
-            <tr>
-              <td style="text-align:center">${i + 1}</td>
-              <td>${formatDateTime(thoigian)}</td>
-              <td>${ten}</td>
-              <td>${mucChi || "–"}</td>
-              <td style="text-align:right">${tien.toLocaleString()} ₫</td>
-              <td>${nguon}</td>
-            </tr>
-          `;
-        }).join("")}
+        ${chiTieu.map(([thoiGian, tenKhoan, soTien, _, danhMucTen, ghiChu], i) => `
+          <tr>
+            <td style="text-align:center">${i + 1}</td>
+            <td>${formatDateTime(thoiGian)}</td>
+            <td>${tenKhoan}</td>
+            <td>${danhMucTen || ""}</td>
+            <td style="text-align:right">${soTien.toLocaleString()} ₫</td>
+            <td>${ghiChu || ""}</td>
+          </tr>
+        `).join("")}
       </tbody>
     `;
+
     contentSections[1].appendChild(table2);
   } catch (err) {
     contentSections[1].innerHTML = `<p style="color:red">Lỗi tải chi tiêu: ${err.message}</p>`;
@@ -748,6 +783,7 @@ function checkIfNoThanhVien(tourId) {
 /**Quản lý thành viên*/
 // Mở bảng thêm thành viên
 function handleThemThanhVien() {
+  onMenuAction();
   document.getElementById("themTvModal").style.display = "flex";
 
   const select = document.getElementById("tv-tour-select");
@@ -995,7 +1031,6 @@ function submitXoaThanhVien() {
 
   db.run(`DELETE FROM ThanhVien WHERE tv_id = ?`, [tvId]);
   db.run(`DELETE FROM DongGop WHERE dg_tv_id = ?`, [tvId]);
-  db.run(`DELETE FROM ChiTieu WHERE ct_nguoi_ung_id = ?`, [tvId]);
 
   saveToLocal();
   closeXoaThanhVien();
@@ -1103,7 +1138,6 @@ function handleChi() {
     tourSelect.appendChild(opt);
   });
 
-  onChangeTourInChi(); // Cập nhật danh sách nguồn chi
   loadDanhMucToSelect();
 
   // Reset form
@@ -1121,31 +1155,6 @@ function closeChi() {
   document.getElementById("chiModal").style.display = "none";
 }
 
-// Tải danh sách thành viên
-function onChangeTourInChi() {
-  const tourId = document.getElementById("chi-tour-select").value;
-  const nguonChiSelect = document.getElementById("chi-nguon-chi");
-  nguonChiSelect.innerHTML = "";
-
-  // ⬅️ Mặc định đầu tiên là "Quỹ chung"
-  const defaultOpt = document.createElement("option");
-  defaultOpt.value = "";
-  defaultOpt.textContent = "Quỹ chung";
-  nguonChiSelect.appendChild(defaultOpt);
-
-  const res = db.exec(`
-    SELECT tv_id, tv_ho_ten 
-    FROM ThanhVien 
-    WHERE tv_tour_id = ${tourId}
-  `);
-
-  res[0]?.values.forEach(([id, name]) => {
-    const opt = document.createElement("option");
-    opt.value = id;
-    opt.textContent = `${name} (Ứng)`;
-    nguonChiSelect.appendChild(opt);
-  });
-}
 
 // Tải danh sách danh mục chi
 function loadDanhMucToSelect() {
@@ -1167,11 +1176,7 @@ function submitChi() {
   const soTien = parseInt(document.getElementById("chi-so-tien").value);
   const thoiGian = document.getElementById("chi-thoi-gian").value;
   const ghiChu = document.getElementById("chi-ghi-chu").value.trim();
-  const nguonChi = document.getElementById("chi-nguon-chi").value;
   const danhMucId = document.getElementById("chi-danh-muc-select").value;
-
-  const isQuyChung = !nguonChi;
-  const nguoiUngId = isQuyChung ? null : nguonChi;
 
   if (!tourId || !tenKhoan || isNaN(soTien) || soTien <= 0 || !thoiGian) {
     alert("Vui lòng nhập đầy đủ thông tin hợp lệ.");
@@ -1181,24 +1186,17 @@ function submitChi() {
   db.run(`
     INSERT INTO ChiTieu (
       ct_tour_id, ct_thoi_gian, ct_ten_khoan,
-      ct_so_tien, ct_quy_chung, ct_nguoi_ung_id,
-      ct_danh_muc_id, ct_ghi_chu
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ct_so_tien, ct_danh_muc_id, ct_ghi_chu
+    ) VALUES (?, ?, ?, ?, ?, ?)
   `, [
     tourId, thoiGian, tenKhoan,
-    soTien, isQuyChung ? 1 : 0, nguoiUngId,
-    danhMucId || null, ghiChu
+    soTien, danhMucId || null, ghiChu
   ]);
 
   saveToLocal();
   closeChi();
   loadTour(tourId);
 }
-
-
-
-
-
 
 
 

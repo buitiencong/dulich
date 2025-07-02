@@ -143,12 +143,6 @@
         <input type="datetime-local" id="chi-thoi-gian" />
       </label>
 
-      <label>💰 Nguồn chi:
-        <select id="chi-nguon-chi">
-          <option value="">Quỹ chung</option>
-        </select>
-      </label>
-
       <label>Ghi chú:
         <textarea id="chi-ghi-chu" rows="2" style="width: 100%;"></textarea>
       </label>
@@ -169,17 +163,19 @@
       <h3>🌍 Thêm Tour</h3>
 
       <label style="color: #ff0000;">Tên tour: *
-        <!-- <input type="text" id="tour-ten" required /> -->
-        <input type="text" id="tour-ten" autocapitalize="none" />
+        <input type="text" id="tour-ten" autocapitalize="none"/>
       </label>
 
-      <label>Ngày đi: *
-        <input type="date" id="tour-ngay-di" />
-      </label>
+      <!-- Gộp ngày đi và ngày về thành 1 hàng -->
+      <div style="display: flex; gap: 10px;">
+        <label style="flex: 1;">Ngày đi:
+          <input type="date" id="tour-ngay-di" />
+        </label>
 
-      <label>Ngày về: *
-        <input type="date" id="tour-ngay-ve" />
-      </label>
+        <label style="flex: 1;">Ngày về:
+          <input type="date" id="tour-ngay-ve" />
+        </label>
+      </div>
 
       <label>Địa điểm:
         <input type="text" id="tour-diadiem" />
@@ -279,30 +275,33 @@
         <select id="tv-tour-select" onchange="onChangeTourInThemTv()"></select>
       </label>
 
-      <label>Giới tính:
-        <select id="tv-gioitinh">
+      <!-- Gộp Giới tính + Họ tên thành viên -->
+      <label>Tên thành viên:</label>
+      <div style="display: flex; gap: 10px;">
+        <select id="tv-gioitinh" style="flex: 1;">
           <option value="nam">👨 Nam</option>
           <option value="nu">👩 Nữ</option>
           <option value="be_nam">👦 Bé Nam</option>
           <option value="be_nu">👧 Bé Nữ</option>
         </select>
-      </label>
-
-      <label>Họ và tên thành viên:
-        <input type="text" id="tv-ten" placeholder="Nguyễn Văn A" />
-      </label>
+        <input type="text" id="tv-ten" placeholder="Nguyễn Văn A" style="flex: 3;" />
+      </div>
 
       <label>Số điện thoại:
         <input type="text" id="tv-sdt" placeholder="0978xxxxxx" />
       </label>
-
-      <label>Tỉ lệ đóng góp (%):
-        <input type="number" id="tv-tyle" placeholder="100" min="0" max="100" value="100" />
-      </label>
-
-      <label>Số tiền đóng góp:
-        <input type="number" id="tv-sotien" placeholder="100000" min="0" />
-      </label>
+      
+      <!-- Gộp Số tiền + Tỉ lệ đóng góp -->
+      <div style="display: flex; gap: 10px;">
+        <label style="flex: 2;">
+          Số tiền đóng góp:
+          <input type="number" id="tv-sotien" placeholder="100000" min="0" />
+        </label>
+        <label style="flex: 1;">
+          Tỉ lệ (%):
+          <input type="number" id="tv-tyle" placeholder="100" min="0" max="100" value="100" />
+        </label>
+      </div>
 
       <div class="modal-actions">
         <button onclick="submitThemThanhVien()">➕ Lưu</button>
@@ -313,41 +312,52 @@
 
 
 
+
   <!-- Form Sửa Thành viên -->
-  <div id="suaTvModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <h3>✍️ Sửa thông tin thành viên</h3>
+<!-- Form Sửa Thành viên -->
+<div id="suaTvModal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <h3>✍️ Sửa thông tin thành viên</h3>
 
-      <label>Chọn tour:
-        <select id="edit-tv-tour" onchange="loadThanhVienForEdit(); onChangeTourInSuaTv();"></select>
-      </label>
+    <label>Chọn tour:
+      <select id="edit-tv-tour" onchange="loadThanhVienForEdit(); onChangeTourInSuaTv();"></select>
+    </label>
 
-      <label>Chọn thành viên:
-        <select id="edit-tv-select" onchange="fillOldThanhVienInfo()"></select>
-      </label>
+    <label>Chọn thành viên:
+      <select id="edit-tv-select" onchange="fillOldThanhVienInfo()"></select>
+    </label>
 
-      <label>Họ và tên:
-        <input type="text" id="edit-tv-name" placeholder="Nhập tên mới..." />
-      </label>
+    <!-- Gộp giới tính + tên thành viên -->
+    <label>Tên thành viên:</label>
+    <div style="display: flex; gap: 10px;">
+      <select id="edit-tv-gioitinh" style="flex: 1;">
+        <option value="nam">👨 Nam</option>
+        <option value="nu">👩 Nữ</option>
+        <option value="be_nam">👦 Bé Nam</option>
+        <option value="be_nu">👧 Bé Nữ</option>
+      </select>
+      <input type="text" id="edit-tv-name" placeholder="Nguyễn Văn A" style="flex: 3;" />
+    </div>
 
-      <label>Số điện thoại:
-        <input type="text" id="edit-tv-sdt" placeholder="0978xxxxxx" />
-      </label>
+    <label>Số điện thoại:
+      <input type="text" id="edit-tv-sdt" placeholder="0978xxxxxx" />
+    </label>
 
-      <label>Tỉ lệ đóng góp (%):
-        <input type="number" id="edit-tv-tyle" min="0" max="100" />
-      </label>
+    <label>Tỉ lệ đóng góp (%):
+      <input type="number" id="edit-tv-tyle" placeholder="100" min="0" max="100" />
+    </label>
 
-      <label>Ghi chú:
-        <textarea id="edit-tv-ghichu" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
-      </label>
+    <label>Ghi chú:
+      <textarea id="edit-tv-ghichu" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+    </label>
 
-      <div class="modal-actions">
-        <button onclick="submitSuaThanhVien()">✍️ Cập nhật</button>
-        <button class="btn-cancel" onclick="closeSuaThanhVien()">🔙 Huỷ</button>
-      </div>
+    <div class="modal-actions">
+      <button onclick="submitSuaThanhVien()">✍️ Cập nhật</button>
+      <button class="btn-cancel" onclick="closeSuaThanhVien()">🔙 Huỷ</button>
     </div>
   </div>
+</div>
+
 
 
 
