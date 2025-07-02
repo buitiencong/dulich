@@ -144,7 +144,7 @@
       </label>
 
       <label>Ghi chú:
-        <textarea id="chi-ghi-chu" rows="2" style="width: 100%;"></textarea>
+        <textarea id="tour-ghichu" rows="2"></textarea>
       </label>
 
       <div class="modal-actions">
@@ -182,7 +182,7 @@
       </label>
 
       <label>Ghi chú:
-        <textarea id="tour-ghichu" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+        <textarea id="tour-ghichu" rows="2"></textarea>
       </label>
 
       <div style="margin-top: 10px;">
@@ -218,24 +218,27 @@
         <select id="edit-tour-select" onchange="loadTourInfoToForm()"></select>
       </label>
 
-      <label>Tên tour:
+      <label>Tên mới:
         <input type="text" id="edit-ten-tour" />
       </label>
 
-      <label>Ngày đi:
-        <input type="date" id="edit-ngay-di" />
-      </label>
+      <!-- Gộp ngày đi và ngày về trên 1 hàng -->
+      <div style="display: flex; gap: 10px;">
+        <label style="flex: 1;">Ngày đi:
+          <input type="date" id="edit-ngay-di" />
+        </label>
 
-      <label>Ngày về:
-        <input type="date" id="edit-ngay-ve" />
-      </label>
+        <label style="flex: 1;">Ngày về:
+          <input type="date" id="edit-ngay-ve" />
+        </label>
+      </div>
 
       <label>Địa điểm:
         <input type="text" id="edit-diadiem-tour" />
       </label>
 
       <label>Ghi chú:
-        <textarea id="edit-ghichu-tour" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+        <textarea id="edit-ghichu-tour" rows="2"></textarea>
       </label>
 
       <div class="modal-actions">
@@ -348,7 +351,7 @@
     </label>
 
     <label>Ghi chú:
-      <textarea id="edit-tv-ghichu" rows="2" style="width: 100%; padding: 6px; font-size: 16px;"></textarea>
+      <textarea id="edit-tv-ghichu" rows="2"></textarea>
     </label>
 
     <div class="modal-actions">
@@ -405,7 +408,7 @@
       </label>
 
       <label>Ghi chú:
-        <textarea id="thu-ghi-chu" rows="2" style="width:100%;"></textarea>
+        <textarea id="thu-ghi-chu" rows="2"></textarea>
       </label>
 
       <div class="modal-actions">
