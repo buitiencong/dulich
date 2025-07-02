@@ -59,12 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("sqlite-ready", () => {
     loadTour();
 
-    //checkIfNoTours();
-    if (isIntroClosed) {
-      checkIfNoTours();
-    } else {
-      window._pendingInitAfterIntro = () => checkIfNoTours();
-    }
+    checkIfNoTours();
 
     // Fallback nếu loadTour không thành công sau 300ms
     setTimeout(() => {
@@ -164,7 +159,13 @@ function initNewDatabase() {
   saveToLocal();         // ✅ Lưu DB mới vào localforage
   loadTour();            // ✅ Cập nhật UI
 
-  window._pendingInitAfterIntro = () => checkIfNoTours();
+  if (isIntroClosed) {
+    checkIfNoTours();   // nếu có xử lý riêng khi chưa có tour
+  } else {
+    window._pendingInitAfterIntro = () => {
+      checkIfNoTours();
+    };
+  }
 }
 
 // Hàm để lưu các thay đổi cơ sở dữ liệu
@@ -222,24 +223,22 @@ function checkIfNoTours() {
     const count = result[0]?.values[0][0] || 0;
 
     if (count === 0) {
+      // Nếu intro chưa đóng, chờ sau khi user tắt modal
       if (!isIntroClosed) {
-        window._pendingInitAfterIntro = () => checkIfNoTours();
+        window._pendingInitAfterIntro = () => checkIfNoTours(); // gọi lại sau
         return;
       }
 
-      // ✅ Hiển thị Toast → chờ Toast biến mất mới mở form
-      showToast("🧭 Chưa có tour nào được tạo.<br>Hãy tạo tour mới để bắt đầu.", '', true);
-
-      // ⏳ Delay mở form sau Toast (mặc định Toast biến mất sau 3s hoặc 10s)
+      // Nếu intro đã đóng thì mới hiện thông báo
       setTimeout(() => {
+        alert("🧭 Chưa có tour nào được tạo.\n" + "      Hãy tạo tour mới để bắt đầu.");
         handleThemTour();
-      }, 3000); // hoặc 10000 nếu bạn muốn chờ toast biến mất hoàn toàn
+      }, 200);
     }
   } catch (err) {
     console.error("Lỗi khi kiểm tra tour:", err.message);
   }
 }
-
 
 
 // Load danh sách Tour vào Tab
