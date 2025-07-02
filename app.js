@@ -59,7 +59,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("sqlite-ready", () => {
     loadTour();
 
-    checkIfNoTours();
+    //checkIfNoTours();
+    if (isIntroClosed) {
+      checkIfNoTours();
+    } else {
+      window._pendingInitAfterIntro = () => checkIfNoTours();
+    }
 
     // Fallback nếu loadTour không thành công sau 300ms
     setTimeout(() => {
@@ -159,13 +164,7 @@ function initNewDatabase() {
   saveToLocal();         // ✅ Lưu DB mới vào localforage
   loadTour();            // ✅ Cập nhật UI
 
-  if (isIntroClosed) {
-    checkIfNoTours();   // nếu có xử lý riêng khi chưa có tour
-  } else {
-    window._pendingInitAfterIntro = () => {
-      checkIfNoTours();
-    };
-  }
+  window._pendingInitAfterIntro = () => checkIfNoTours();
 }
 
 // Hàm để lưu các thay đổi cơ sở dữ liệu
@@ -221,17 +220,25 @@ function checkIfNoTours() {
   try {
     const result = db.exec("SELECT COUNT(*) FROM Tour");
     const count = result[0]?.values[0][0] || 0;
+
     if (count === 0) {
-      // ✅ Trì hoãn 1 chút để đảm bảo alert không bị chặn trong PWA
+      // Nếu intro chưa đóng thì chờ rồi gọi lại sau
+      if (!isIntroClosed) {
+        window._pendingInitAfterIntro = () => checkIfNoTours();
+        return;
+      }
+
+      // Chỉ hiển thị sau khi intro đã đóng
       setTimeout(() => {
-        alert("🧭 Chưa có tour nào được tạo.\n" + "      Hãy tạo tour mới để bắt đầu.");
-        handleThemTour(); // 👈 mở form thêm tour sau alert
-      }, 200);
+        showToast("🧭 Chưa có tour nào được tạo.<br>Hãy tạo tour mới để bắt đầu.", '', true);
+        handleThemTour();
+      }, 300);
     }
   } catch (err) {
     console.error("Lỗi khi kiểm tra tour:", err.message);
   }
 }
+
 
 // Load danh sách Tour vào Tab
 function loadTour(selectedTourId = null) {
