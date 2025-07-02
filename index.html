@@ -279,6 +279,15 @@
         <select id="tv-tour-select" onchange="onChangeTourInThemTv()"></select>
       </label>
 
+      <label>Giới tính:
+        <select id="tv-gioitinh">
+          <option value="nam">👨 Nam</option>
+          <option value="nu">👩 Nữ</option>
+          <option value="be_nam">👦 Bé Nam</option>
+          <option value="be_nu">👧 Bé Nữ</option>
+        </select>
+      </label>
+
       <label>Họ và tên thành viên:
         <input type="text" id="tv-ten" placeholder="Nguyễn Văn A" />
       </label>
@@ -289,6 +298,10 @@
 
       <label>Tỉ lệ đóng góp (%):
         <input type="number" id="tv-tyle" placeholder="100" min="0" max="100" value="100" />
+      </label>
+
+      <label>Số tiền đóng góp:
+        <input type="number" id="tv-sotien" placeholder="100000" min="0" />
       </label>
 
       <div class="modal-actions">

@@ -753,7 +753,6 @@ function handleThemThanhVien() {
   const select = document.getElementById("tv-tour-select");
   select.innerHTML = "";
 
-  // 🔄 Sửa: tour_id, tour_ten theo CSDL mới
   const result = db.exec(`SELECT tour_id, tour_ten FROM Tour`);
   const activeTab = document.querySelector(".tab-button.active");
   const activeTourId = activeTab ? activeTab.dataset.tourId : null;
@@ -762,19 +761,18 @@ function handleThemThanhVien() {
     const opt = document.createElement("option");
     opt.value = id;
     opt.textContent = ten;
-    if (id == activeTourId) opt.selected = true; // ✅ chọn đúng tab đang mở
+    if (id == activeTourId) opt.selected = true;
     select.appendChild(opt);
   });
 
-  // ✅ Reset các trường nhập
   document.getElementById("tv-ten").value = "";
   document.getElementById("tv-sdt").value = "";
   document.getElementById("tv-tyle").value = "100";
+  document.getElementById("tv-gioitinh").value = "nam";
+  document.getElementById("tv-sotien").value = "";
 
-  // Focus ô nhập tên
   setTimeout(() => document.getElementById("tv-ten").focus(), 10);
 
-  // ✅ Đảm bảo tab tour đang active vẫn hiển thị
   if (activeTourId) {
     switchTab(activeTourId);
   }
@@ -789,30 +787,48 @@ function submitThemThanhVien() {
   const tenInput = document.getElementById("tv-ten");
   const sdtInput = document.getElementById("tv-sdt");
   const tyleInput = document.getElementById("tv-tyle");
+  const gioiTinhSelect = document.getElementById("tv-gioitinh");
+  const soTienInput = document.getElementById("tv-sotien");
 
   const tenRaw = tenInput.value.trim();
   const ten = capitalizeWords(tenRaw);
   const sdt = sdtInput.value.trim();
   const tyle = parseInt(tyleInput.value);
+  const gioiTinh = gioiTinhSelect.value;
+  const soTien = parseFloat(soTienInput.value) || 0;
 
   if (!ten) {
     alert("Hãy nhập họ và tên thành viên.");
     return;
   }
 
+  // ✅ Thêm thành viên
   db.run(`
-    INSERT INTO ThanhVien (tv_tour_id, tv_ho_ten, tv_sdt, tv_ty_le_dong)
-    VALUES (?, ?, ?, ?)
-  `, [tourId, ten, sdt, isNaN(tyle) ? 1 : tyle / 100]);
+    INSERT INTO ThanhVien (tv_tour_id, tv_ho_ten, tv_gioi_tinh, tv_sdt, tv_ty_le_dong)
+    VALUES (?, ?, ?, ?, ?)
+  `, [tourId, ten, gioiTinh, sdt, isNaN(tyle) ? 1 : tyle / 100]);
+
+  // ✅ Nếu có số tiền đóng góp, thêm dòng vào bảng DongGop kèm thời gian hiện tại
+  if (soTien > 0) {
+    const tvId = db.exec(`SELECT last_insert_rowid()`)[0].values[0][0];
+    db.run(`
+      INSERT INTO DongGop (dg_tour_id, dg_tv_id, dg_so_tien, dg_thoi_gian)
+      VALUES (?, ?, ?, datetime('now', 'localtime'))
+    `, [tourId, tvId, soTien]);
+  }
 
   saveToLocal();
   loadTour(tourId);
 
+  // ✅ Reset form
   tenInput.value = "";
   sdtInput.value = "";
   tyleInput.value = "100";
+  gioiTinhSelect.value = "nam";
+  soTienInput.value = "";
   tenInput.focus();
 }
+
 
 function handleSuaThanhVien() {
   onMenuAction();
@@ -875,18 +891,18 @@ function fillOldThanhVienInfo() {
   if (!selectedId) return;
 
   const result = db.exec(`
-    SELECT tv_ho_ten, tv_sdt, tv_ty_le_dong
+    SELECT tv_ho_ten, tv_sdt, tv_ty_le_dong, tv_gioi_tinh
     FROM ThanhVien
     WHERE tv_id = ${selectedId}
   `);
 
-  const [ten, sdt, tyle] = result[0]?.values[0] || [];
+  const [ten, sdt, tyle, gioiTinh] = result[0]?.values[0] || [];
 
   document.getElementById("edit-tv-name").value = ten || "";
   document.getElementById("edit-tv-sdt").value = sdt || "";
   document.getElementById("edit-tv-tyle").value = ((tyle || 1) * 100).toFixed(0);
+  document.getElementById("edit-tv-gioitinh").value = gioiTinh || "nam";
 }
-
 
 function submitSuaThanhVien() {
   const tvId = document.getElementById("edit-tv-select").value;
@@ -894,6 +910,7 @@ function submitSuaThanhVien() {
   const newName = capitalizeWords(rawName);
   const sdt = document.getElementById("edit-tv-sdt").value.trim();
   const tyle = parseInt(document.getElementById("edit-tv-tyle").value.trim()) || 100;
+  const gioiTinh = document.getElementById("edit-tv-gioitinh").value;
   const tourId = document.getElementById("edit-tv-tour").value;
 
   if (!newName) {
@@ -903,9 +920,9 @@ function submitSuaThanhVien() {
 
   db.run(`
     UPDATE ThanhVien
-    SET tv_ho_ten = ?, tv_sdt = ?, tv_ty_le_dong = ?
+    SET tv_ho_ten = ?, tv_sdt = ?, tv_ty_le_dong = ?, tv_gioi_tinh = ?
     WHERE tv_id = ?
-  `, [newName, sdt, tyle / 100, tvId]);
+  `, [newName, sdt, tyle / 100, gioiTinh, tvId]);
 
   saveToLocal();
   closeSuaThanhVien();
