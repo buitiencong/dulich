@@ -70,8 +70,7 @@
                 <li onclick="handleXoaThanhVien()">🙅‍♂️ Xóa thành viên</li>
             </ul>
             </li>
-            <li onclick="handleSuaNgay()"><span>📆 Sửa ngày điểm danh</span></li>
-            <li onclick="location.href='thuhocphi.html'"><span>📊 Lịch sử thu học phí</span></li>
+            <li onclick="location.href='lichsuthutien.html'"><span>📊 Thống kê</span></li>
             <li class="has-submenu">
             <span onclick="toggleSubmenu(this)">💾 Cơ sở dữ liệu
                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +123,7 @@
       <h3>💸 Ghi chi tiêu</h3>
 
       <label>Chọn tour:
-        <select id="chi-tour-select" onchange="onChangeTourInChi()"></select>
+        <select id="chi-tour-select"></select>
       </label>
 
       <label>Tên khoản chi:
@@ -144,7 +143,7 @@
       </label>
 
       <label>Ghi chú:
-        <textarea id="tour-ghichu" rows="2"></textarea>
+        <textarea id="chi-ghi-chu" rows="2"></textarea>
       </label>
 
       <div class="modal-actions">
@@ -160,9 +159,9 @@
   <!-- Form Thêm Tour -->
   <div id="themTourModal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
-      <h3>🌍 Thêm Tour</h3>
+      <h3>🌍 Thêm Tour mới</h3>
 
-      <label style="color: #ff0000;">Tên tour: *
+      <label style="color: #ff0000;">Tên: *
         <input type="text" id="tour-ten" autocapitalize="none"/>
       </label>
 
@@ -181,7 +180,7 @@
         <input type="text" id="tour-diadiem" />
       </label>
 
-      <label>Ghi chú:
+      <label>Mô tả:
         <textarea id="tour-ghichu" rows="2"></textarea>
       </label>
 
@@ -237,7 +236,7 @@
         <input type="text" id="edit-diadiem-tour" />
       </label>
 
-      <label>Ghi chú:
+      <label>Mô tả:
         <textarea id="edit-ghichu-tour" rows="2"></textarea>
       </label>
 
@@ -348,10 +347,6 @@
 
     <label>Tỉ lệ đóng góp (%):
       <input type="number" id="edit-tv-tyle" placeholder="100" min="0" max="100" />
-    </label>
-
-    <label>Ghi chú:
-      <textarea id="edit-tv-ghichu" rows="2"></textarea>
     </label>
 
     <div class="modal-actions">
@@ -483,7 +478,7 @@
 
   <footer style="text-align: center; font-size: 14px; color: #333; padding: 10px 0 5px;">
     <hr style="border: none; border-top: 1px solid gray; margin-bottom: 10px;" />
-    © 06/2025<strong> Bùi Tiến Công</strong> – buitiencong@gmail.com
+    © 07/2025<strong> Bùi Tiến Công</strong> – buitiencong@gmail.com
   </footer>
 
 </body>

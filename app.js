@@ -303,31 +303,19 @@ function switchTab(tourId) {
 // Hiển thị bảng
 function showTourData(tourId) {
   const container = document.getElementById(`tab-${tourId}`);
-  container.innerHTML = ""; // Xoá nội dung cũ
+  container.innerHTML = "";
 
-  // ✅ Phần 1: Lấy thông tin tour
+  // Thông tin tour
   let infoDiv = null;
   try {
     const tourInfo = db.exec(`
       SELECT tour_ten, tour_dia_diem, tour_ngay_di, tour_ngay_ve, tour_mo_ta
-      FROM Tour
-      WHERE tour_id = ${tourId}
+      FROM Tour WHERE tour_id = ${tourId}
     `);
-
     if (tourInfo.length > 0) {
       const [ten, dia_diem, ngay_di, ngay_ve, ghi_chu] = tourInfo[0].values[0];
-
       infoDiv = document.createElement("div");
-      infoDiv.style.cssText = `
-        margin: 0 0 12px 0;
-        font-weight: normal;
-        padding: 10px;
-        background: #f1f9ff;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        text-align: center;
-      `;
-
+      infoDiv.className = "tour-info";
       infoDiv.innerHTML = `
         🧳 Tour: <b>${ten}</b> – 📍 ${dia_diem || "…"} – 📅 ${ngay_di} đến ${ngay_ve}
         ${ghi_chu ? `<br>📝 <i>${ghi_chu}</i>` : ""}
@@ -337,197 +325,207 @@ function showTourData(tourId) {
     console.error("Lỗi lấy thông tin tour:", err.message);
   }
 
-  // ✅ Phần 2: Tạo thanh tab và nội dung tab
-  const tabBar = document.createElement("div");
-  tabBar.className = "tab-header";
-  tabBar.style.cssText = `
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+  // Vùng tab radio
+  const tabWrapper = document.createElement("div");
+  tabWrapper.innerHTML = `
+    <div class="table-tab-container">
+      <input type="radio" name="table-tab-${tourId}" id="table-tab-1-${tourId}" class="table-tab-radio" checked>
+      <label for="table-tab-1-${tourId}" class="table-tab-label">Thành viên</label>
+
+      <input type="radio" name="table-tab-${tourId}" id="table-tab-2-${tourId}" class="table-tab-radio">
+      <label for="table-tab-2-${tourId}" class="table-tab-label">Thu</label>
+
+      <input type="radio" name="table-tab-${tourId}" id="table-tab-3-${tourId}" class="table-tab-radio">
+      <label for="table-tab-3-${tourId}" class="table-tab-label">Chi tiêu</label>
+
+      <div class="table-tab-indicator"></div>
+
+      <div class="table-tab-content-wrapper">
+        <div class="table-tab-content" data-tab="1"></div>
+        <div class="table-tab-content" data-tab="2"></div>
+        <div class="table-tab-content" data-tab="3"></div>
+      </div>
+    </div>
   `;
 
-  const tabNames = ["Thành viên", "Chi tiêu"];
-  const contentSections = [];
+  if (infoDiv) container.appendChild(infoDiv);
+  container.appendChild(tabWrapper);
 
-  tabNames.forEach((name, i) => {
-    const tabBtn = document.createElement("div");
-    tabBtn.textContent = name;
-    tabBtn.className = "inner-tab";
-    tabBtn.style.cssText = `
-      padding: 8px 16px;
-      border: 1px solid #ccc;
-      border-bottom: none;
-      border-radius: 6px 6px 0 0;
-      cursor: pointer;
-      background: ${i === 0 ? "#fff" : "#e0e0e0"};
-      font-weight: ${i === 0 ? "bold" : "normal"};
-    `;
+  const contentSections = [
+    tabWrapper.querySelector('.table-tab-content[data-tab="1"]'),
+    tabWrapper.querySelector('.table-tab-content[data-tab="2"]'),
+    tabWrapper.querySelector('.table-tab-content[data-tab="3"]')
+  ];
 
-    const section = document.createElement("div");
-    section.style.cssText = `
-      display: ${i === 0 ? "block" : "none"};
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 0 0 6px 6px;
-      background: #fff;
-    `;
-
-    tabBtn.onclick = () => {
-      contentSections.forEach((sec, j) => {
-        sec.style.display = j === i ? "block" : "none";
-        tabBar.children[j].style.background = j === i ? "#fff" : "#e0e0e0";
-        tabBar.children[j].style.fontWeight = j === i ? "bold" : "normal";
-      });
-    };
-
-    tabBar.appendChild(tabBtn);
-    container.appendChild(section);
-    contentSections.push(section);
-  });
-
-  // ✅ Chèn thông tin tour (nếu có) vào TRÊN thanh tab
-  if (infoDiv) container.prepend(infoDiv);
-
-  // ✅ Chèn tabBar ngay sau info
-  container.insertBefore(tabBar, contentSections[0]);
-
-  // ✅ Tab 1: Thành viên
-// ✅ Tab 1: Thành viên
-// ✅ Tab 1: Thành viên
-try {
-  const res = db.exec(`
-    SELECT tv_id, tv_ho_ten, tv_sdt, tv_ty_le_dong, tv_gioi_tinh
-    FROM ThanhVien
-    WHERE tv_tour_id = ${tourId}
-  `);
-  const members = res[0]?.values || [];
-
-  const sumTyle = members.reduce((sum, m) => sum + (m[3] || 0), 0);
-
-  const dongGopMap = {};
-  const gopRes = db.exec(`
-    SELECT dg_tv_id, SUM(dg_so_tien)
-    FROM DongGop
-    WHERE dg_tour_id = ${tourId}
-    GROUP BY dg_tv_id
-  `);
-  gopRes[0]?.values.forEach(([id, sum]) => {
-    dongGopMap[id] = sum;
-  });
-
-  const chiRes = db.exec(`
-    SELECT SUM(ct_so_tien)
-    FROM ChiTieu
-    WHERE ct_tour_id = ${tourId}
-  `);
-  const tongChiTieu = chiRes[0]?.values[0][0] || 0;
-
-  // ✅ Hàm làm tròn số về bội số gần nhất của 1000
-  const lamTronNgan = (x) => x >= 0
-    ? Math.floor(x / 1000) * 1000
-    : Math.ceil(x / 1000) * 1000;
-
-  const table1 = document.createElement("table");
-  table1.border = "1";
-  table1.cellPadding = "5";
-  table1.style.cssText = "border-collapse: collapse; width: 100%;";
-
-  table1.innerHTML = `
-    <thead>
-      <tr>
-        <th>STT</th>
-        <th></th>
-        <th>Họ và tên</th>
-        <th>SĐT</th>
-        <th>Tỉ lệ đóng</th>
-        <th>Đã đóng</th>
-        <th>Tổng kết</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${members.map(([id, name, sdt, tyle, gioi], i) => {
-        const gioiIcon = {
-          nam: "👨", nu: "👩", be_nam: "👦", be_nu: "👧"
-        }[gioi] || "❓";
-
-        const tyLeDong = tyle || 0;
-        const daDong = dongGopMap[id] || 0;
-        const chiPhaiDong = sumTyle > 0 ? tongChiTieu * (tyLeDong / sumTyle) : 0;
-        const chenhLechRaw = daDong - chiPhaiDong;
-        const chenhLech = lamTronNgan(chenhLechRaw);
-
-        return `
-          <tr>
-            <td style="text-align:center">${i + 1}</td>
-            <td style="text-align:center">${gioiIcon}</td>
-            <td>${name}</td>
-            <td>${sdt || ""}</td>
-            <td style="text-align:center">${(tyLeDong * 100).toFixed(0)}%</td>
-            <td style="text-align:right">${daDong.toLocaleString()} ₫</td>
-            <td style="text-align:right; color: ${chenhLech >= 0 ? "green" : "red"};">
-              ${chenhLech >= 0 ? "+" : ""}${chenhLech.toLocaleString()} ₫
-            </td>
-          </tr>
-        `;
-      }).join("")}
-    </tbody>
-  `;
-  contentSections[0].appendChild(table1);
-} catch (err) {
-  contentSections[0].innerHTML = `<p style="color:red">Lỗi tải thành viên: ${err.message}</p>`;
-}
-
-
-
-
-
-  // ✅ Tab 2: Chi tiêu
+  // Tab 1: Thành viên
   try {
     const res = db.exec(`
-      SELECT ct_thoi_gian, ct_ten_khoan, ct_so_tien, dm.dm_ten
+      SELECT tv_id, tv_ho_ten, tv_sdt, tv_ty_le_dong, tv_gioi_tinh
+      FROM ThanhVien WHERE tv_tour_id = ${tourId}
+    `);
+    const members = res[0]?.values || [];
+
+    const sumTyle = members.reduce((sum, m) => sum + (m[3] || 0), 0);
+    const dongGopMap = {};
+    const gopRes = db.exec(`
+      SELECT dg_tv_id, SUM(dg_so_tien)
+      FROM DongGop WHERE dg_tour_id = ${tourId}
+      GROUP BY dg_tv_id
+    `);
+    gopRes[0]?.values.forEach(([id, sum]) => { dongGopMap[id] = sum; });
+
+    const chiRes = db.exec(`
+      SELECT SUM(ct_so_tien)
+      FROM ChiTieu WHERE ct_tour_id = ${tourId}
+    `);
+    const tongChiTieu = chiRes[0]?.values[0][0] || 0;
+
+    const lamTronNgan = (x) => x >= 0
+      ? Math.floor(x / 1000) * 1000
+      : Math.ceil(x / 1000) * 1000;
+
+    const table = document.createElement("table");
+    table.border = "1";
+    table.cellPadding = "5";
+    table.style.cssText = "border-collapse: collapse; width: 100%;";
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>STT</th><th></th><th>Họ và tên</th><th>SĐT</th><th>Tỉ lệ</th><th>Đã đóng</th><th>Tổng kết</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${members.map(([id, name, sdt, tyle, gioi], i) => {
+          const icon = { nam: "👨", nu: "👩", be_nam: "👦", be_nu: "👧" }[gioi] || "❓";
+          const tyLeDong = tyle || 0;
+          const daDong = dongGopMap[id] || 0;
+          const chiPhaiDong = sumTyle > 0 ? tongChiTieu * (tyLeDong / sumTyle) : 0;
+          const chenhLech = lamTronNgan(daDong - chiPhaiDong);
+
+          return `
+            <tr>
+              <td style="text-align:center">${i + 1}</td>
+              <td style="text-align:center">${icon}</td>
+              <td>${name}</td>
+              <td>${sdt || ""}</td>
+              <td style="text-align:center">${(tyLeDong * 100).toFixed(0)}%</td>
+              <td style="text-align:right">${daDong.toLocaleString()} ₫</td>
+              <td style="text-align:right; color:${chenhLech >= 0 ? "green" : "red"}">
+                ${chenhLech >= 0 ? "+" : ""}${chenhLech.toLocaleString()} ₫
+              </td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    `;
+    contentSections[0].appendChild(table);
+  } catch (err) {
+    contentSections[0].innerHTML = `<p style="color:red">Lỗi thành viên: ${err.message}</p>`;
+  }
+
+  // Tab 2: Thu
+  try {
+    const res = db.exec(`
+      SELECT dg.dg_id, dg.dg_thoi_gian, tv.tv_ho_ten, dg.dg_so_tien, dg.dg_ghi_chu
+      FROM DongGop dg
+      LEFT JOIN ThanhVien tv ON tv.tv_id = dg.dg_tv_id
+      WHERE dg.dg_tour_id = ${tourId}
+      ORDER BY dg.dg_thoi_gian ASC
+    `);
+    const data = res[0]?.values || [];
+
+    const table = document.createElement("table");
+    table.border = "1";
+    table.cellPadding = "5";
+    table.style.cssText = "border-collapse: collapse; width: 100%;";
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>STT</th><th>Thời gian</th><th>Họ và tên</th><th>Số tiền</th><th>Ghi chú</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map(([id, time, name, amount, note], i) => `
+          <tr>
+            <td style="text-align:center">${i + 1}</td>
+            <td>${formatDateTime(time)}</td>
+            <td>${name}</td>
+            <td style="text-align:right">${amount.toLocaleString()} ₫</td>
+            <td>${note || ""}</td>
+            <td style="text-align:center">
+              <span onclick="xoaDongGop(${id}, ${tourId})" style="cursor:pointer" title="Xoá">🗑️</span>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    `;
+    contentSections[1].appendChild(table);
+  } catch (err) {
+    contentSections[1].innerHTML = `<p style="color:red">Lỗi thu tiền: ${err.message}</p>`;
+  }
+
+  // Tab 3: Chi tiêu
+  try {
+    const res = db.exec(`
+      SELECT ct_id, ct_thoi_gian, ct_ten_khoan, ct_so_tien, dm.dm_ten, ct_ghi_chu
       FROM ChiTieu
       LEFT JOIN DanhMuc dm ON dm.dm_id = ChiTieu.ct_danh_muc_id
       WHERE ct_tour_id = ${tourId}
       ORDER BY ct_thoi_gian ASC
     `);
-    const chiTieu = res[0]?.values || [];
+    const data = res[0]?.values || [];
 
-    const table2 = document.createElement("table");
-    table2.border = "1";
-    table2.cellPadding = "5";
-    table2.style.cssText = "border-collapse: collapse; width: 100%;";
+    const table = document.createElement("table");
+    table.border = "1";
+    table.cellPadding = "5";
+    table.style.cssText = "border-collapse: collapse; width: 100%;";
 
-    table2.innerHTML = `
+    table.innerHTML = `
       <thead>
         <tr>
-          <th>STT</th>
-          <th>Thời gian</th>
-          <th>Tên khoản</th>
-          <th>Danh mục</th>
-          <th>Số tiền</th>
-          <th>Ghi chú</th>
+          <th>STT</th><th>Thời gian</th><th>Tên khoản</th><th>Danh mục</th><th>Số tiền</th><th>Ghi chú</th><th></th>
         </tr>
       </thead>
       <tbody>
-        ${chiTieu.map(([thoiGian, tenKhoan, soTien, _, danhMucTen, ghiChu], i) => `
+        ${data.map(([id, time, name, amount, category, note], i) => `
           <tr>
             <td style="text-align:center">${i + 1}</td>
-            <td>${formatDateTime(thoiGian)}</td>
-            <td>${tenKhoan}</td>
-            <td>${danhMucTen || ""}</td>
-            <td style="text-align:right">${soTien.toLocaleString()} ₫</td>
-            <td>${ghiChu || ""}</td>
+            <td>${formatDateTime(time)}</td>
+            <td>${name}</td>
+            <td>${category || ""}</td>
+            <td style="text-align:right">${amount.toLocaleString()} ₫</td>
+            <td>${note || ""}</td>
+            <td style="text-align:center">
+              <span onclick="xoaChiTieu(${id}, ${tourId})" style="cursor:pointer" title="Xoá">🗑️</span>
+            </td>
           </tr>
         `).join("")}
       </tbody>
     `;
-
-    contentSections[1].appendChild(table2);
+    contentSections[2].appendChild(table);
   } catch (err) {
-    contentSections[1].innerHTML = `<p style="color:red">Lỗi tải chi tiêu: ${err.message}</p>`;
+    contentSections[2].innerHTML = `<p style="color:red">Lỗi chi tiêu: ${err.message}</p>`;
   }
 }
 
+
+function xoaDongGop(dgId, tourId) {
+  if (!confirm("Bạn có chắc muốn xoá khoản thu này?")) return;
+
+  db.run(`DELETE FROM DongGop WHERE dg_id = ?`, [dgId]);
+  saveToLocal();
+  loadTour(tourId);
+}
+
+function xoaChiTieu(ctId, tourId) {
+  if (!confirm("Bạn có chắc muốn xoá khoản chi này?")) return;
+
+  db.run(`DELETE FROM ChiTieu WHERE ct_id = ?`, [ctId]);
+  saveToLocal();
+  loadTour(tourId);
+}
 
 function formatDateTime(dateStr) {
   const d = new Date(dateStr);

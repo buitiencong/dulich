@@ -708,3 +708,86 @@ tr:nth-child(even) {
   margin-left: 8px;
   }
 }
+
+/* Style Tab trong bảng dữ liệu */
+.tour-info {
+  margin: 0 0 12px 0;
+  font-weight: normal;
+  padding: 10px;
+  background: #f1f9ff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.table-tab-container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 2px;
+  background-color: #dadadb;
+  border-radius: 9px;
+  margin-bottom: 0;
+}
+
+.table-tab-radio {
+  display: none;
+}
+
+.table-tab-label {
+  width: 130px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+.table-tab-indicator {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 130px;
+  height: 28px;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease-out;
+  z-index: 1;
+  border: 0.5px solid rgba(0, 0, 0, 0.04);
+}
+
+/* Dịch chuyển indicator dựa trên radio được chọn */
+[id^="table-tab-1"]:checked ~ .table-tab-label[for^="table-tab-1"] ~ .table-tab-indicator {
+  left: 2px;
+}
+[id^="table-tab-2"]:checked ~ .table-tab-label[for^="table-tab-2"] ~ .table-tab-indicator {
+  left: calc(130px + 2px);
+}
+[id^="table-tab-3"]:checked ~ .table-tab-label[for^="table-tab-3"] ~ .table-tab-indicator {
+  left: calc(130px * 2 + 2px);
+}
+
+/* Hiển thị nội dung đúng tab */
+.table-tab-content-wrapper {
+  width: 100%;
+}
+.table-tab-content {
+  display: none;
+  border: 1px solid #ccc;
+  border-top: none;
+  padding: 0;
+  border-radius: 0 0 6px 6px;
+  background: #fff;
+}
+[id^="table-tab-1"]:checked ~ .table-tab-content-wrapper > .table-tab-content[data-tab="1"],
+[id^="table-tab-2"]:checked ~ .table-tab-content-wrapper > .table-tab-content[data-tab="2"],
+[id^="table-tab-3"]:checked ~ .table-tab-content-wrapper > .table-tab-content[data-tab="3"] {
+  display: block;
+}
+
