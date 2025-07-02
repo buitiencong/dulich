@@ -709,6 +709,8 @@ tr:nth-child(even) {
   }
 }
 
+
+
 /* Style Tab trong bảng dữ liệu */
 .tour-info {
   margin: 0 0 12px 0;
@@ -727,7 +729,7 @@ tr:nth-child(even) {
   gap: 0;
   padding: 2px;
   background-color: #dadadb;
-  border-radius: 9px;
+  border-radius: 9px 9px 0 0;
   margin-bottom: 0;
 }
 
@@ -736,7 +738,6 @@ tr:nth-child(even) {
 }
 
 .table-tab-label {
-  width: 130px;
   height: 28px;
   display: flex;
   align-items: center;
@@ -746,13 +747,14 @@ tr:nth-child(even) {
   cursor: pointer;
   position: relative;
   z-index: 2;
+  flex: 1 1 33.33%; /* Mỗi tab chiếm 1/3 chiều rộng */
 }
 
 .table-tab-indicator {
   position: absolute;
   top: 2px;
-  left: 2px;
-  width: 130px;
+  left: 0%;
+  width: calc(100% / 3); /* Indicator rộng bằng 1/3 container */
   height: 28px;
   background: #fff;
   border-radius: 7px;
@@ -762,21 +764,22 @@ tr:nth-child(even) {
   border: 0.5px solid rgba(0, 0, 0, 0.04);
 }
 
-/* Dịch chuyển indicator dựa trên radio được chọn */
+/* Dịch chuyển indicator dựa trên tab được chọn */
 [id^="table-tab-1"]:checked ~ .table-tab-label[for^="table-tab-1"] ~ .table-tab-indicator {
-  left: 2px;
+  left: 0%;
 }
 [id^="table-tab-2"]:checked ~ .table-tab-label[for^="table-tab-2"] ~ .table-tab-indicator {
-  left: calc(130px + 2px);
+  left: 33.3333%;
 }
 [id^="table-tab-3"]:checked ~ .table-tab-label[for^="table-tab-3"] ~ .table-tab-indicator {
-  left: calc(130px * 2 + 2px);
+  left: 66.6666%;
 }
 
 /* Hiển thị nội dung đúng tab */
 .table-tab-content-wrapper {
   width: 100%;
 }
+
 .table-tab-content {
   display: none;
   border: 1px solid #ccc;
@@ -785,9 +788,11 @@ tr:nth-child(even) {
   border-radius: 0 0 6px 6px;
   background: #fff;
 }
+
 [id^="table-tab-1"]:checked ~ .table-tab-content-wrapper > .table-tab-content[data-tab="1"],
 [id^="table-tab-2"]:checked ~ .table-tab-content-wrapper > .table-tab-content[data-tab="2"],
 [id^="table-tab-3"]:checked ~ .table-tab-content-wrapper > .table-tab-content[data-tab="3"] {
   display: block;
 }
+
 
