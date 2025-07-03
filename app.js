@@ -16,14 +16,21 @@ initSqlJs({
   localforage.getItem("userDB").then(buffer => {
     if (buffer instanceof Uint8Array || buffer?.length) {
       db = new SQL.Database(new Uint8Array(buffer));
+      loadTour();
+
+      if (isIntroClosed) {
+        checkIfNoTours();
+      } else {
+        window._pendingInitAfterIntro = () => checkIfNoTours();
+      }
+
     } else {
-      db = new SQL.Database(); // tạo mới nếu chưa có
-      initNewDatabase();       // hàm này sẽ tạo bảng mẫu
+      initNewDatabase(); // đã xử lý trong đó
     }
 
-    // Gửi sự kiện báo DB đã sẵn sàng
     document.dispatchEvent(new Event("sqlite-ready"));
   });
+
 });
 
 
@@ -59,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("sqlite-ready", () => {
     loadTour();
 
-    checkIfNoTours();
+    // checkIfNoTours();
 
     // Fallback nếu loadTour không thành công sau 300ms
     setTimeout(() => {
