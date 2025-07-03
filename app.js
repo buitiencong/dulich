@@ -1083,6 +1083,10 @@ function submitXoaThanhVien() {
   const result = db.exec(`SELECT tv_ho_ten FROM ThanhVien WHERE tv_id = ?`, [tvId]);
   const ten = result[0]?.values[0]?.[0] || "thành viên";
 
+  // Lấy tên tour từ dropdown
+  const tourSelect = document.getElementById("xoa-tv-tour");
+  const tourTen = tourSelect.options[tourSelect.selectedIndex]?.textContent || "tour";
+
   // Xoá dữ liệu
   db.run(`DELETE FROM ThanhVien WHERE tv_id = ?`, [tvId]);
   db.run(`DELETE FROM DongGop WHERE dg_tv_id = ?`, [tvId]);
@@ -1092,8 +1096,9 @@ function submitXoaThanhVien() {
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
   // Hiển thị toast
-  showToast(`Đã xoá thành viên ${ten}`, '', true);
+  showToast(`Đã xoá ${ten} khỏi tour ${tourTen}`, '', true);
 }
+
 
 
 
@@ -1504,7 +1509,7 @@ function showToast(message, svgIcon = '', centered = false, position = 'bottom')
   setTimeout(() => {
     el.style.opacity = '0';
     setTimeout(() => el.remove(), 500);
-  }, 10000);
+  }, 5000);
 }
 
 
