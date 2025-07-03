@@ -235,7 +235,7 @@ function checkIfNoTours() {
 
       // Nếu intro đã đóng thì mới hiện thông báo
       setTimeout(() => {
-        alert("🧭 Chưa có tour nào được tạo.\n" + "      Hãy tạo tour mới để bắt đầu.");
+        alert("🏝️ Chưa có tour nào được tạo.\n" + "      Hãy tạo tour mới để bắt đầu.");
         handleThemTour();
       }, 200);
     }
