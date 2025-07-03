@@ -643,7 +643,7 @@ function submitThemTour() {
   saveToLocal();        // Lưu DB vào localforage
   closeThemTour();      // Đóng form
   loadTour(newTourId);  // Load lại tab, chuyển sang tour vừa tạo
-  showToast(`Đã thêm tour "${ten}" thành công!`, '', true, 'top');
+  showToast(`Đã thêm tour "${ten}" thành công!`, '', true);
 
   // Gợi ý thêm thành viên nếu chưa có
   setTimeout(() => {
