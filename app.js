@@ -63,6 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   enableEnterToJump('#themTourModal', '.modal-actions button');
   enableEnterToJump('#suaTourModal', '.modal-actions button');
+  enableEnterToJump('#themTvModal', '.modal-actions button');
+  enableEnterToJump('#suaTvModal', '.modal-actions button');
+  enableEnterToJump('#chiModal', '.modal-actions button');
+
   // 💰 Gắn format tiền cho các input số tiền
   attachCurrencyFormatter("#tv-sotien");
   attachCurrencyFormatter("#thu-so-tien");
@@ -351,7 +355,7 @@ function showTourData(tourId, selectedSubTab = 1) {
       <label for="table-tab-2-${tourId}" class="table-tab-label">Thu</label>
 
       <input type="radio" name="table-tab-${tourId}" id="table-tab-3-${tourId}" class="table-tab-radio" ${selectedSubTab == 3 ? 'checked' : ''}>
-      <label for="table-tab-3-${tourId}" class="table-tab-label">Chi tiêu</label>
+      <label for="table-tab-3-${tourId}" class="table-tab-label">Chi</label>
 
       <div class="table-tab-indicator"></div>
 
