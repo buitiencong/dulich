@@ -357,7 +357,7 @@ try {
       onclick="showToast(\`${fullInfo.replace(/`/g, "\\`")}\`, '', true)"
       style="color: #007bff; font-weight: bold; text-decoration: none;"
     >${ten}</a> – 👥 ${soThanhVien} thành viên<br>
-    💰 Tổng thu: <b>${tongThu.toLocaleString()} ₫</b> – 💸 Tổng chi: <b>${tongChi.toLocaleString()} ₫</b> 
+    Tổng thu: <b>${tongThu.toLocaleString()} ₫</b> – Tổng chi: <b>${tongChi.toLocaleString()} ₫</b> 
     <br><span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>
   `;
 } catch (err) {
@@ -1534,7 +1534,7 @@ function showToast(message, svgIcon = '', centered = false, position = 'bottom')
   setTimeout(() => {
     el.style.opacity = '0';
     setTimeout(() => el.remove(), 500);
-  }, 5000);
+  }, 3000);
 }
 
 
