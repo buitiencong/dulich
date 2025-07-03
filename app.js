@@ -777,7 +777,7 @@ function checkIfNoThanhVien(tourId) {
 
     if (count === 0) {
       setTimeout(() => {
-        alert("👫 Tour này chưa có thành viên.\n" + "      Hãy thêm thành viên vào tour.");
+        alert("👫 Tour này chưa có thành viên.\n" + "       Hãy thêm thành viên vào tour.");
         setTimeout(() => handleThemThanhVien(tourId), 100); // 👈 Gọi hàm thêm thành viên với tourId
       }, 0);
     }
