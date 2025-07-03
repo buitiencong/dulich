@@ -326,23 +326,40 @@ function showTourData(tourId, selectedSubTab = 1) {
 
   // Thông tin tour
   let infoDiv = null;
-  try {
-    const tourInfo = db.exec(`
-      SELECT tour_ten, tour_dia_diem, tour_ngay_di, tour_ngay_ve, tour_mo_ta
-      FROM Tour WHERE tour_id = ${tourId}
-    `);
-    if (tourInfo.length > 0) {
-      const [ten, dia_diem, ngay_di, ngay_ve, ghi_chu] = tourInfo[0].values[0];
-      infoDiv = document.createElement("div");
-      infoDiv.className = "tour-info";
-      infoDiv.innerHTML = `
-        🧳 Tour: <b>${ten}</b> – 📍 ${dia_diem || "…"} – 📅 ${ngay_di} đến ${ngay_ve}
-        ${ghi_chu ? `<br>📝 <i>${ghi_chu}</i>` : ""}
-      `;
-    }
-  } catch (err) {
-    console.error("Lỗi lấy thông tin tour:", err.message);
-  }
+try {
+  const tourInfo = db.exec(`
+    SELECT tour_ten, tour_dia_diem
+    FROM Tour WHERE tour_id = ${tourId}
+  `);
+  const ten = tourInfo[0]?.values[0]?.[0] || "Không rõ";
+  const dia_diem = tourInfo[0]?.values[0]?.[1] || "…";
+
+  // Đếm số thành viên
+  const tvCountRes = db.exec(`SELECT COUNT(*) FROM ThanhVien WHERE tv_tour_id = ${tourId}`);
+  const soThanhVien = tvCountRes[0]?.values[0][0] || 0;
+
+  // Tổng thu
+  const thuRes = db.exec(`SELECT SUM(dg_so_tien) FROM DongGop WHERE dg_tour_id = ${tourId}`);
+  const tongThu = thuRes[0]?.values[0][0] || 0;
+
+  // Tổng chi
+  const chiRes = db.exec(`SELECT SUM(ct_so_tien) FROM ChiTieu WHERE ct_tour_id = ${tourId}`);
+  const tongChi = chiRes[0]?.values[0][0] || 0;
+
+  // Phần còn lại
+  const conLai = tongThu - tongChi;
+
+  // Tạo phần tử hiển thị
+  infoDiv = document.createElement("div");
+  infoDiv.className = "tour-info";
+  infoDiv.innerHTML = `
+    ✈️ Tour <b>${ten}</b> – 📍 ${dia_diem} – 👥 ${soThanhVien} thành viên<br>
+    💰 Tổng thu: <b>${tongThu.toLocaleString()} ₫</b> – 💸 Tổng chi: <b>${tongChi.toLocaleString()} ₫</b> 
+    (<span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>)
+  `;
+} catch (err) {
+  console.error("Lỗi lấy thông tin tour:", err.message);
+}
 
   // Vùng tab radio
   const tabWrapper = document.createElement("div");
