@@ -1582,6 +1582,24 @@ function closeAddToScreenModal(confirmed) {
   }
 }
 
+// Hàm đóng mở Form hướng dẫn backup trong PWA
+function openBackupModal(onConfirm) {
+  onMenuAction();
+  const modal = document.getElementById("backupModal");
+  modal.style.display = "flex";
+  modal.dataset.confirmCallback = onConfirm?.name || "";
+  window._modalConfirmAction = onConfirm;
+}
+
+function closeBackupModal(confirmed) {
+  const modal = document.getElementById("backupModal");
+  modal.style.display = "none";
+
+  if (confirmed && typeof window._modalConfirmAction === "function") {
+    window._modalConfirmAction();
+  }
+}
+
 // Hàm lấy thời gian hiện tại của hệ thống
 function getLocalDatetimeInputValue() {
   const now = new Date();
@@ -1593,7 +1611,7 @@ function getLocalDatetimeInputValue() {
 // 🎯 Từ khoá gợi ý danh mục
 const tuKhoaDanhMuc = {
   "Di chuyển": ["taxi", "grab", "xe", "xăng", "vé xe", "tàu", "máy bay", "ô tô", "xe điện", "xe ôm", "bus", "gửi xe", "đi lại", "di chuyển", "trạm", "cầu", "phà", "thuyền"],
-  "Ăn uống": ["ăn", "cơm", "phở", "bún", "nước", "trà", "cà phê", "đồ uống", "đồ ăn", "nhậu", "lẩu", "bánh mì", "nhà hàng", "buffet"],
+  "Ăn uống": ["ăn", "uống", "cơm", "phở", "bún", "nước", "trà", "cà phê", "đồ uống", "đồ ăn", "nhậu", "lẩu", "bánh mì", "nhà hàng", "buffet"],
   "Lưu trú": ["khách sạn", "nghỉ", "homestay", "resort", "phòng"],
   "Giải trí": ["vé", "tham quan", "vui chơi", "game", "xem phim", "karaoke", "công viên", "bảo tàng", "safari"],
   "Chi phí khác": ["mua", "thuê", "khác", "chi thêm", "thuốc", "quà", "lưu niệm"]
