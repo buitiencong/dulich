@@ -61,6 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   enableEnterToJump('#themTourModal', '.modal-actions button');
   enableEnterToJump('#suaTourModal', '.modal-actions button');
+  // 💰 Gắn format tiền cho các input số tiền
+  attachCurrencyFormatter("#tv-sotien");
+  attachCurrencyFormatter("#thu-so-tien");
+  attachCurrencyFormatter("#chi-so-tien");
+  attachCurrencyFormatter("#dg-so-tien");
 
   // Khi cả DOM và DB đã sẵn sàng thì xử lý
   document.addEventListener("sqlite-ready", () => {
@@ -837,7 +842,11 @@ function submitThemThanhVien() {
   const sdt = sdtInput.value.trim();
   const tyle = parseInt(tyleInput.value);
   const gioiTinh = gioiTinhSelect.value;
-  const soTien = parseFloat(soTienInput.value) || 0;
+  // const soTien = parseFloat(soTienInput.value) || 0;
+  // ✅ Parse đúng số tiền đã được định dạng (VD: "100.000 đ")
+  const rawTien = soTienInput.value.replace(/[^\d]/g, "");
+  const soTien = parseInt(rawTien) || 0;
+
 
   if (!ten) {
     alert("Hãy nhập họ và tên thành viên.");
@@ -1073,8 +1082,9 @@ function handleThu() {
 
   // Reset các trường
   document.getElementById("thu-so-tien").value = "";
-  document.getElementById("thu-thoi-gian").value = new Date().toISOString().slice(0, 16);
+  document.getElementById("thu-thoi-gian").value = getLocalDatetimeInputValue();
   document.getElementById("thu-ghi-chu").value = "";
+  
 }
 
 function closeThu() {
@@ -1104,7 +1114,11 @@ function onChangeTourInThu() {
 function submitThu() {
   const tourId = document.getElementById("thu-tour-select").value;
   const tvId = document.getElementById("thu-tv-select").value;
-  const soTien = parseInt(document.getElementById("thu-so-tien").value);
+
+  // ✅ Xử lý định dạng tiền
+  const rawTien = document.getElementById("thu-so-tien").value.replace(/[^\d]/g, "");
+  const soTien = parseInt(rawTien) || 0;
+
   const thoiGian = document.getElementById("thu-thoi-gian").value;
   const ghiChu = document.getElementById("thu-ghi-chu").value.trim();
 
@@ -1149,7 +1163,7 @@ function handleChi() {
   // Reset form
   document.getElementById("chi-ten-khoan").value = "";
   document.getElementById("chi-so-tien").value = "";
-  document.getElementById("chi-thoi-gian").value = new Date().toISOString().slice(0, 16);
+  document.getElementById("chi-thoi-gian").value = getLocalDatetimeInputValue();
   document.getElementById("chi-ghi-chu").value = "";
 
   // ✅ Focus vào ô tên khoản chi
@@ -1179,7 +1193,11 @@ function loadDanhMucToSelect() {
 function submitChi() {
   const tourId = document.getElementById("chi-tour-select").value;
   const tenKhoan = document.getElementById("chi-ten-khoan").value.trim();
-  const soTien = parseInt(document.getElementById("chi-so-tien").value);
+
+  // ✅ Xử lý định dạng tiền kiểu "100.000 đ"
+  const rawTien = document.getElementById("chi-so-tien").value.replace(/[^\d]/g, "");
+  const soTien = parseInt(rawTien) || 0;
+
   const thoiGian = document.getElementById("chi-thoi-gian").value;
   const ghiChu = document.getElementById("chi-ghi-chu").value.trim();
   const danhMucId = document.getElementById("chi-danh-muc-select").value;
@@ -1203,6 +1221,7 @@ function submitChi() {
   closeChi();
   loadTour(tourId);
 }
+
 
 
 
@@ -1357,6 +1376,26 @@ function capitalizeWords(str) {
     .join(' ');
 }
 
+// Định dạng tiền kiểu Việt Nam, ví dụ: "100.000 đ"
+function attachCurrencyFormatter(selector) {
+  const input = document.querySelector(selector);
+  if (!input) return;
+
+  if (input.dataset.hasCurrencyListener) return;
+
+  input.addEventListener("input", function () {
+    const raw = this.value.replace(/\D/g, "");
+    if (!raw) {
+      this.value = "";
+      return;
+    }
+    this.value = Number(raw).toLocaleString("vi-VN") + " đ";
+  });
+
+  input.dataset.hasCurrencyListener = "true"; // tránh gắn lại nhiều lần
+}
+
+
 // Hàm toast hỗ trợ IOS
 function showToast(message, svgIcon = '', centered = false) {
   const toast = document.createElement('div');
@@ -1418,4 +1457,11 @@ function closeAddToScreenModal(confirmed) {
       window._pendingInitAfterIntro = null;
     }, 100);
   }
+}
+
+// Hàm lấy thời gian hiện tại của hệ thống
+function getLocalDatetimeInputValue() {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // chuyển UTC → local
+  return now.toISOString().slice(0, 16); // "yyyy-MM-ddTHH:mm"
 }
