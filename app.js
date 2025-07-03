@@ -871,6 +871,13 @@ function handleThemThanhVien() {
   }
 }
 
+function onChangeTourInThemTv() {
+  const tourId = document.getElementById("tv-tour-select").value;
+  if (tourId) {
+    switchTab(tourId);
+  }
+}
+
 function closeThemThanhVien() {
   document.getElementById("themTvModal").style.display = "none";
 }
@@ -1189,6 +1196,7 @@ function onChangeTourInThu() {
     tvSelect.appendChild(opt);
   });
 }
+
 
 function submitThu() {
   const tourId = document.getElementById("thu-tour-select").value;
