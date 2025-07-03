@@ -889,7 +889,7 @@ function submitThemThanhVien() {
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
   // ✅ Hiển thị toast
-  showToast(`Đã thêm thành viên "${ten}"`, '', true);
+  showToast(`Đã thêm thành viên "${ten}"`, '', true, 'top');
 
   // Reset form
   tenInput.value = "";
@@ -990,6 +990,11 @@ function submitSuaThanhVien() {
     return;
   }
 
+  // Lấy tên cũ trước khi sửa
+  const result = db.exec(`SELECT tv_ho_ten FROM ThanhVien WHERE tv_id = ?`, [tvId]);
+  const oldName = result[0]?.values[0]?.[0] || "thành viên";
+
+  // Cập nhật thông tin
   db.run(`
     UPDATE ThanhVien
     SET tv_ho_ten = ?, tv_sdt = ?, tv_ty_le_dong = ?, tv_gioi_tinh = ?
@@ -999,7 +1004,11 @@ function submitSuaThanhVien() {
   saveToLocal();
   closeSuaThanhVien();
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
+
+  // ✅ Hiển thị toast
+  showToast(`Đã sửa "${oldName}" thành "${newName}"`, '', true, 'top');
 }
+
 
 function closeSuaThanhVien() {
   document.getElementById("suaTvModal").style.display = "none";
@@ -1065,13 +1074,22 @@ function submitXoaThanhVien() {
   const tvId = document.getElementById("xoa-tv-select").value;
   const tourId = document.getElementById("xoa-tv-tour").value;
 
+  // Lấy tên thành viên trước khi xoá
+  const result = db.exec(`SELECT tv_ho_ten FROM ThanhVien WHERE tv_id = ?`, [tvId]);
+  const ten = result[0]?.values[0]?.[0] || "thành viên";
+
+  // Xoá dữ liệu
   db.run(`DELETE FROM ThanhVien WHERE tv_id = ?`, [tvId]);
   db.run(`DELETE FROM DongGop WHERE dg_tv_id = ?`, [tvId]);
 
   saveToLocal();
   closeXoaThanhVien();
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
+
+  // Hiển thị toast
+  showToast(`Đã xoá thành viên "${ten}"`, '', true);
 }
+
 
 
 /** Quản lý Thu Chi */
@@ -1153,6 +1171,14 @@ function submitThu() {
     return;
   }
 
+  // ✅ Lấy tên thành viên
+  const result = db.exec(`SELECT tv_ho_ten FROM ThanhVien WHERE tv_id = ?`, [tvId]);
+  const ten = result[0]?.values[0]?.[0] || "thành viên";
+
+  // ✅ Định dạng số tiền thành 500.000đ
+  const formatted = soTien.toLocaleString("vi-VN") + "đ";
+
+  // ✅ Thêm dòng đóng góp
   db.run(`
     INSERT INTO DongGop (dg_tour_id, dg_tv_id, dg_so_tien, dg_thoi_gian, dg_ghi_chu)
     VALUES (?, ?, ?, ?, ?)
@@ -1161,7 +1187,11 @@ function submitThu() {
   saveToLocal();
   closeThu();
   loadTour(tourId, 2); // chọn lại tab "Thu"
+
+  // ✅ Hiển thị toast
+  showToast(`Đã thu "${ten}" ${formatted}`, '', true);
 }
+
 
 
 // Chi
@@ -1250,7 +1280,12 @@ function submitChi() {
   saveToLocal();
   closeChi();
   loadTour(tourId, 3); // 👉 quay lại tab Chi tiêu
+
+  // ✅ Hiển thị toast
+  const formatted = soTien.toLocaleString("vi-VN") + "đ";
+  showToast(`Đã thêm "${tenKhoan}" ${formatted}`, '', true);
 }
+
 
 
 
