@@ -888,8 +888,12 @@ function submitThemThanhVien() {
   saveToLocal();
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
+  // ✅ Lấy tên tour từ dropdown
+  const tourSelect = document.getElementById("tv-tour-select");
+  const tourTen = tourSelect.options[tourSelect.selectedIndex].textContent;
+
   // ✅ Hiển thị toast
-  showToast(`Đã thêm thành viên ${ten}`, '', true, 'top');
+  showToast(`Đã thêm ${ten} vào tour ${tourTen}`, '', true, 'top');
 
   // Reset form
   tenInput.value = "";
@@ -899,6 +903,7 @@ function submitThemThanhVien() {
   soTienInput.value = "";
   tenInput.focus();
 }
+
 
 
 
