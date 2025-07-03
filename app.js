@@ -3,6 +3,8 @@ let SQL;
 
 let deferredPrompt = null;
 let isIntroClosed = false;
+let _nextSelectedSubTab = 1;
+
 
 /** 🔸 Bước 1: Khởi tạo SQLite và DB */
 initSqlJs({
@@ -251,7 +253,7 @@ function checkIfNoTours() {
 
 
 // Load danh sách Tour vào Tab
-function loadTour(selectedTourId = null) {
+function loadTour(selectedTourId = null, selectedSubTab = 1) {
   const tabs = document.getElementById("tabs");
   const contents = document.getElementById("tabContents");
   tabs.innerHTML = "";
@@ -259,7 +261,6 @@ function loadTour(selectedTourId = null) {
 
   let tours;
   try {
-    // Dùng đúng tên cột mới trong CSDL
     tours = db.exec("SELECT tour_id, tour_ten FROM Tour ORDER BY tour_ngay_di DESC");
   } catch (err) {
     tabs.innerHTML = "<p>Lỗi: " + err.message + "</p>";
@@ -276,7 +277,7 @@ function loadTour(selectedTourId = null) {
     tabBtn.className = "tab-button";
     tabBtn.textContent = tourTen;
     tabBtn.dataset.tourId = tourId;
-    tabBtn.onclick = () => switchTab(tourId);  // Bạn nên đảm bảo đã có hàm này
+    tabBtn.onclick = () => switchTab(tourId);
 
     const isActive = selectedTourId ? tourId == selectedTourId : index === 0;
     if (isActive) tabBtn.classList.add("active");
@@ -289,8 +290,9 @@ function loadTour(selectedTourId = null) {
     contents.appendChild(contentDiv);
 
     if (isActive) {
-      // Gọi các hàm hiển thị nội dung cho tour
-      if (typeof showTourData === "function") showTourData(tourId);
+      if (typeof showTourData === "function") {
+        showTourData(tourId, selectedSubTab);  // ✅ truyền tab cần chọn
+      }
     }
   });
 }
@@ -313,7 +315,8 @@ function switchTab(tourId) {
 
 
 // Hiển thị bảng
-function showTourData(tourId) {
+// Hiển thị bảng
+function showTourData(tourId, selectedSubTab = 1) {
   const container = document.getElementById(`tab-${tourId}`);
   container.innerHTML = "";
 
@@ -341,13 +344,13 @@ function showTourData(tourId) {
   const tabWrapper = document.createElement("div");
   tabWrapper.innerHTML = `
     <div class="table-tab-container">
-      <input type="radio" name="table-tab-${tourId}" id="table-tab-1-${tourId}" class="table-tab-radio" checked>
+      <input type="radio" name="table-tab-${tourId}" id="table-tab-1-${tourId}" class="table-tab-radio" ${selectedSubTab == 1 ? 'checked' : ''}>
       <label for="table-tab-1-${tourId}" class="table-tab-label">Thành viên</label>
 
-      <input type="radio" name="table-tab-${tourId}" id="table-tab-2-${tourId}" class="table-tab-radio">
+      <input type="radio" name="table-tab-${tourId}" id="table-tab-2-${tourId}" class="table-tab-radio" ${selectedSubTab == 2 ? 'checked' : ''}>
       <label for="table-tab-2-${tourId}" class="table-tab-label">Thu</label>
 
-      <input type="radio" name="table-tab-${tourId}" id="table-tab-3-${tourId}" class="table-tab-radio">
+      <input type="radio" name="table-tab-${tourId}" id="table-tab-3-${tourId}" class="table-tab-radio" ${selectedSubTab == 3 ? 'checked' : ''}>
       <label for="table-tab-3-${tourId}" class="table-tab-label">Chi tiêu</label>
 
       <div class="table-tab-indicator"></div>
@@ -842,24 +845,20 @@ function submitThemThanhVien() {
   const sdt = sdtInput.value.trim();
   const tyle = parseInt(tyleInput.value);
   const gioiTinh = gioiTinhSelect.value;
-  // const soTien = parseFloat(soTienInput.value) || 0;
-  // ✅ Parse đúng số tiền đã được định dạng (VD: "100.000 đ")
+
   const rawTien = soTienInput.value.replace(/[^\d]/g, "");
   const soTien = parseInt(rawTien) || 0;
-
 
   if (!ten) {
     alert("Hãy nhập họ và tên thành viên.");
     return;
   }
 
-  // ✅ Thêm thành viên
   db.run(`
     INSERT INTO ThanhVien (tv_tour_id, tv_ho_ten, tv_gioi_tinh, tv_sdt, tv_ty_le_dong)
     VALUES (?, ?, ?, ?, ?)
   `, [tourId, ten, gioiTinh, sdt, isNaN(tyle) ? 1 : tyle / 100]);
 
-  // ✅ Nếu có số tiền đóng góp, thêm dòng vào bảng DongGop kèm thời gian hiện tại
   if (soTien > 0) {
     const tvId = db.exec(`SELECT last_insert_rowid()`)[0].values[0][0];
     db.run(`
@@ -869,9 +868,8 @@ function submitThemThanhVien() {
   }
 
   saveToLocal();
-  loadTour(tourId);
+  loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
-  // ✅ Reset form
   tenInput.value = "";
   sdtInput.value = "";
   tyleInput.value = "100";
@@ -977,7 +975,7 @@ function submitSuaThanhVien() {
 
   saveToLocal();
   closeSuaThanhVien();
-  loadTour(tourId);
+  loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 }
 
 function closeSuaThanhVien() {
@@ -1049,7 +1047,7 @@ function submitXoaThanhVien() {
 
   saveToLocal();
   closeXoaThanhVien();
-  loadTour(tourId);
+  loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 }
 
 
@@ -1077,6 +1075,11 @@ function handleThu() {
     tourSelect.appendChild(opt);
   });
 
+  // Ghi nhớ: sau khi lưu, chọn lại tab "Thu" (tab 2)
+  if (activeTourId) {
+    _nextSelectedSubTab = 2;
+  }
+
   // Gọi đổi danh sách thành viên ban đầu
   onChangeTourInThu();
 
@@ -1084,8 +1087,8 @@ function handleThu() {
   document.getElementById("thu-so-tien").value = "";
   document.getElementById("thu-thoi-gian").value = getLocalDatetimeInputValue();
   document.getElementById("thu-ghi-chu").value = "";
-  
 }
+
 
 function closeThu() {
   document.getElementById("thuModal").style.display = "none";
@@ -1134,7 +1137,7 @@ function submitThu() {
 
   saveToLocal();
   closeThu();
-  loadTour(tourId);
+  loadTour(tourId, 2); // chọn lại tab "Thu"
 }
 
 
@@ -1159,6 +1162,11 @@ function handleChi() {
   });
 
   loadDanhMucToSelect();
+
+  // Ghi nhớ chọn tab Chi tiêu (tab 3)
+  if (activeTourId) {
+    _nextSelectedSubTab = 3;
+  }
 
   // Reset form
   document.getElementById("chi-ten-khoan").value = "";
@@ -1194,7 +1202,6 @@ function submitChi() {
   const tourId = document.getElementById("chi-tour-select").value;
   const tenKhoan = document.getElementById("chi-ten-khoan").value.trim();
 
-  // ✅ Xử lý định dạng tiền kiểu "100.000 đ"
   const rawTien = document.getElementById("chi-so-tien").value.replace(/[^\d]/g, "");
   const soTien = parseInt(rawTien) || 0;
 
@@ -1219,7 +1226,7 @@ function submitChi() {
 
   saveToLocal();
   closeChi();
-  loadTour(tourId);
+  loadTour(tourId, 3); // 👉 quay lại tab Chi tiêu
 }
 
 
