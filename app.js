@@ -1484,17 +1484,36 @@ function attachCurrencyFormatter(selector) {
 
   if (input.dataset.hasCurrencyListener) return;
 
-  input.addEventListener("input", function () {
-    const raw = this.value.replace(/\D/g, "");
+  input.addEventListener("input", function (e) {
+    const inputEl = this;
+    const selectionStart = inputEl.selectionStart;
+
+    // Lấy số thuần tuý từ chuỗi
+    const raw = inputEl.value.replace(/[^\d]/g, "");
+
     if (!raw) {
-      this.value = "";
+      inputEl.value = "";
       return;
     }
-    this.value = Number(raw).toLocaleString("vi-VN") + " đ";
+
+    // Định dạng lại chuỗi số
+    const formatted = Number(raw).toLocaleString("vi-VN") + " đ";
+
+    // Tính chênh lệch độ dài chuỗi trước/sau định dạng
+    const oldLength = inputEl.value.length;
+    inputEl.value = formatted;
+    const newLength = formatted.length;
+    const diff = newLength - oldLength;
+
+    // Cập nhật lại vị trí con trỏ gần nhất (nếu có thể)
+    let newPos = selectionStart + diff;
+    newPos = Math.min(newPos, inputEl.value.length - 2); // tránh chèn sau " đ"
+    inputEl.setSelectionRange(newPos, newPos);
   });
 
-  input.dataset.hasCurrencyListener = "true"; // tránh gắn lại nhiều lần
+  input.dataset.hasCurrencyListener = "true";
 }
+
 
 
 // Hàm toast hỗ trợ IOS
