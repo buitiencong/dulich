@@ -766,6 +766,10 @@ function submitXoaTour() {
 
   if (!confirm("Bạn có chắc muốn xoá tour này và toàn bộ dữ liệu liên quan?")) return;
 
+  // Lấy tên tour trước khi xoá để hiển thị toast
+  const tourResult = db.exec(`SELECT tour_ten FROM Tour WHERE tour_id = ?`, [tourId]);
+  const tourName = tourResult[0]?.values[0]?.[0] || "tour";
+
   // Xoá toàn bộ dữ liệu liên quan
   db.run(`DELETE FROM Tour WHERE tour_id = ?`, [tourId]);
   db.run(`DELETE FROM ThanhVien WHERE tv_tour_id = ?`, [tourId]);
@@ -776,7 +780,11 @@ function submitXoaTour() {
   closeXoaTour();
   loadTour();
   checkIfNoTours?.();
+
+  // Hiển thị Toast sau khi xoá
+  showToast(`Đã xoá tour "${tourName}" thành công!`, '', true);
 }
+
 
 // Kiểm tra xem Tour có thành viên chưa
 function checkIfNoThanhVien(tourId) {
