@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("sqlite-ready", () => {
     loadTour();
 
-    //checkIfNoTours();
+    checkIfNoTours();
 
     // Fallback nếu loadTour không thành công sau 300ms
     setTimeout(() => {
