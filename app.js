@@ -358,7 +358,7 @@ try {
       style="color: #007bff; font-weight: bold; text-decoration: none;"
     >${ten}</a> – 👥 ${soThanhVien} thành viên<br>
     💰 Tổng thu: <b>${tongThu.toLocaleString()} ₫</b> – 💸 Tổng chi: <b>${tongChi.toLocaleString()} ₫</b> 
-    (<span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>)
+    <br><span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>
   `;
 } catch (err) {
   console.error("Lỗi lấy thông tin tour:", err.message);
