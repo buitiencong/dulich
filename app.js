@@ -1465,10 +1465,13 @@ function attachCurrencyFormatter(selector) {
 function showToast(message, svgIcon = '', centered = false, position = 'bottom') {
   const toast = document.createElement('div');
 
-  // Tạo element hiển thị Toast
+  // Xác định vị trí top hoặc bottom
+  const verticalPosition = position === 'top' ? 'top: 50px;' : 'bottom: 20px;';
+
   toast.innerHTML = `
     <div style="
       position: fixed;
+      ${verticalPosition}
       left: 50%;
       transform: translateX(-50%);
       min-width: 300px;
@@ -1490,21 +1493,6 @@ function showToast(message, svgIcon = '', centered = false, position = 'bottom')
   `;
 
   const el = toast.firstElementChild;
-
-  // 👉 Xác định vị trí hiển thị
-  if (position === 'top') {
-    const active = document.activeElement;
-    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
-      const rect = active.getBoundingClientRect();
-      const top = Math.max(rect.top - 60, 10); // tránh đè lên notch, padding 10px
-      el.style.top = `${top}px`;
-    } else {
-      el.style.top = '20px';
-    }
-  } else {
-    el.style.bottom = '20px';
-  }
-
   document.body.appendChild(el);
 
   // Tự động biến mất sau 10 giây
@@ -1513,7 +1501,6 @@ function showToast(message, svgIcon = '', centered = false, position = 'bottom')
     setTimeout(() => el.remove(), 500);
   }, 10000);
 }
-
 
 
 // Hàm đóng Form hướng dẫn thêm vào màn hình chính
