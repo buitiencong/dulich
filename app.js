@@ -404,7 +404,7 @@ function showTourData(tourId) {
       </thead>
       <tbody>
         ${members.map(([id, name, sdt, tyle, gioi], i) => {
-          const icon = { nam: "👨", nu: "👩", be_nam: "👦", be_nu: "👧" }[gioi] || "❓";
+          const icon = { nam: "🙋‍♂️", nu: "🙋‍♀️", be_trai: "👦", be_gai: "👧" }[gioi] || "❓";
           const tyLeDong = tyle || 0;
           const daDong = dongGopMap[id] || 0;
           const chiPhaiDong = sumTyle > 0 ? tongChiTieu * (tyLeDong / sumTyle) : 0;
@@ -570,6 +570,7 @@ function handleThemTour() {
     opt.textContent = name;
     select.appendChild(opt);
   });
+  document.getElementById("tour-ten").focus();
 }
 
 // Đóng form
