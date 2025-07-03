@@ -242,7 +242,7 @@ function checkIfNoTours() {
 
       // Nếu intro đã đóng thì mới hiện thông báo
       setTimeout(() => {
-        alert("🏝️ Chưa có tour nào được tạo.\n" + "      Hãy tạo tour mới để bắt đầu.");
+        alert("🏕️ Chưa có tour nào được tạo.\n" + "      Hãy tạo tour mới để bắt đầu.");
         handleThemTour();
       }, 200);
     }
@@ -643,6 +643,7 @@ function submitThemTour() {
   saveToLocal();        // Lưu DB vào localforage
   closeThemTour();      // Đóng form
   loadTour(newTourId);  // Load lại tab, chuyển sang tour vừa tạo
+  showToast("Đã thêm tour thành công!", '', true, 'top');
 
   // Gợi ý thêm thành viên nếu chưa có
   setTimeout(() => {
@@ -1404,12 +1405,16 @@ function attachCurrencyFormatter(selector) {
 
 
 // Hàm toast hỗ trợ IOS
-function showToast(message, svgIcon = '', centered = false) {
+function showToast(message, svgIcon = '', centered = false, position = 'bottom') {
   const toast = document.createElement('div');
+
+  // Xác định vị trí top hoặc bottom
+  const verticalPosition = position === 'top' ? 'top: 20px;' : 'bottom: 20px;';
+
   toast.innerHTML = `
     <div style="
       position: fixed;
-      bottom: 20px;
+      ${verticalPosition}
       left: 50%;
       transform: translateX(-50%);
       min-width: 300px;
@@ -1418,20 +1423,18 @@ function showToast(message, svgIcon = '', centered = false) {
       color: white;
       padding: 12px 16px;
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
       font-size: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.25);
       z-index: 9999;
       opacity: 1;
       transition: opacity 0.5s ease;
-      ${centered ? 'display: block; text-align: center;' : 'display: flex; align-items: center; gap: 10px;'}
+      ${centered ? 'text-align: center;' : 'display: flex; align-items: center; gap: 10px;'}
     ">
       ${svgIcon}
       <span>${message}</span>
     </div>
   `;
+
   const el = toast.firstElementChild;
   document.body.appendChild(el);
 
@@ -1441,6 +1444,7 @@ function showToast(message, svgIcon = '', centered = false) {
     setTimeout(() => el.remove(), 500);
   }, 10000);
 }
+
 
 // Hàm đóng Form hướng dẫn thêm vào màn hình chính
 function closeAddToScreenModal(confirmed) {
