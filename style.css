@@ -728,7 +728,7 @@ tr:nth-child(even) {
   flex-wrap: wrap;
   gap: 0px;
   padding: 2px;
-  background-color: #dadadb;
+  background-color: #f6f6f6;
   border-radius: 9px 9px 0 0;
   margin-bottom: 0;
 }
@@ -756,6 +756,7 @@ tr:nth-child(even) {
 [id^="table-tab-3"]:checked ~ label[for^="table-tab-3"] {
   opacity: 1;
   font-weight: bold;
+  color: white;
   transform: translateY(-2px); /* ⬆️ nhảy lên */
 }
 
@@ -766,7 +767,7 @@ tr:nth-child(even) {
   left: 20px; /* cách trái 2px */
   width: calc((100% / 3) - 6px); /* trừ 4px để cách trái + phải mỗi bên 2px */
   height: 28px;
-  background: #fff;
+  background: #456882;
   border-radius: 7px;
   box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12),
               0px 3px 1px rgba(0, 0, 0, 0.04);

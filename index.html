@@ -131,7 +131,7 @@
       </label>
 
       <label>Tên khoản chi:
-        <input type="text" id="chi-ten-khoan" placeholder="Mua nước, ăn trưa..." />
+        <input type="text" id="chi-ten-khoan"/>
       </label>
 
       <label>Số tiền:
@@ -161,7 +161,7 @@
     <div class="modal-content">
       <h3>🌍 Thêm Tour mới</h3>
 
-      <label style="color: #ff0000;">Tên: *
+      <label style="color: #ff0000;"><strong>Tên: *</strong>
         <input type="text" id="tour-ten"/>
       </label>
 
@@ -279,7 +279,7 @@
 
       <!-- Gộp Giới tính + Họ tên thành viên -->
       <label style="display: block; color: red;">
-        Tên thành viên: *
+        <strong>Tên thành viên: *</strong>
         <div style="display: flex; gap: 10px; margin-top: 4px;">
           <select id="tv-gioitinh" style="flex: 1;">
             <option value="nam">🙋‍♂️</option>
@@ -287,12 +287,12 @@
             <option value="be_trai">👦</option>
             <option value="be_gai">👧</option>
           </select>
-          <input type="text" id="tv-ten" placeholder="Nguyễn Văn A" style="flex: 5; text-transform: capitalize;" />
+          <input type="text" id="tv-ten" style="flex: 5; text-transform: capitalize;" />
         </div>
       </label>
 
       <label>Số điện thoại:
-        <input type="tel" inputmode="numeric" id="tv-sdt" placeholder="0978xxxxxx" />
+        <input type="tel" inputmode="numeric" id="tv-sdt"/>
       </label>
       
       <!-- Gộp Số tiền + Tỉ lệ đóng góp -->
@@ -341,12 +341,12 @@
           <option value="be_trai">👦</option>
           <option value="be_gai">👧</option>
         </select>
-        <input type="text" id="edit-tv-name" placeholder="Nguyễn Văn A" style="flex: 5;" />
+        <input type="text" id="edit-tv-name" style="flex: 5;" />
       </div>
     </label>
 
     <label>Số điện thoại:
-      <input type="tel" inputmode="numeric" id="edit-tv-sdt" placeholder="0978xxxxxx" />
+      <input type="tel" inputmode="numeric" id="edit-tv-sdt"/>
     </label>
 
     <label>Tỉ lệ đóng góp (%):
