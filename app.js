@@ -1466,7 +1466,7 @@ function showToast(message, svgIcon = '', centered = false, position = 'bottom')
   const toast = document.createElement('div');
 
   // Xác định vị trí top hoặc bottom
-  const verticalPosition = position === 'top' ? 'top: 50px;' : 'bottom: 20px;';
+  const verticalPosition = position === 'top' ? 'top: 100px;' : 'bottom: 20px;';
 
   toast.innerHTML = `
     <div style="
