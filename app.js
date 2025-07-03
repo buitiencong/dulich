@@ -359,7 +359,7 @@ try {
   const thoi_gian = `🗓️ Thời gian: ${formatDate(ngay_di)} - ${formatDate(ngay_ve)}`;
 
   // Phần toast chi tiết
-  const fullInfo = `✈️ Tour ${ten} - 👥 ${soThanhVien} thành viên<br>${thoi_gian}<br>📍 Địa điểm: ${dia_diem} <br> 📝 ${mo_ta || "Không có mô tả"}`;
+  const fullInfo = `✈️ Tour ${ten} - 👥 ${soThanhVien} thành viên<br>${thoi_gian}<br>🌎 Địa điểm: ${dia_diem} <br> 📝 ${mo_ta || "Không có mô tả"}`;
 
   // Tạo phần tử hiển thị
   infoDiv = document.createElement("div");
@@ -437,7 +437,7 @@ try {
       : Math.ceil(x / 1000) * 1000;
 
     const table = document.createElement("table");
-    table.border = "1";
+    table.border = "0.5";
     table.cellPadding = "5";
     table.style.cssText = "border-collapse: collapse; width: 100%;";
 
@@ -488,7 +488,7 @@ try {
     const data = res[0]?.values || [];
 
     const table = document.createElement("table");
-    table.border = "1";
+    table.border = "0.5";
     table.cellPadding = "5";
     table.style.cssText = "border-collapse: collapse; width: 100%;";
 
@@ -530,7 +530,7 @@ try {
     const data = res[0]?.values || [];
 
     const table = document.createElement("table");
-    table.border = "1";
+    table.border = "0.5";
     table.cellPadding = "5";
     table.style.cssText = "border-collapse: collapse; width: 100%;";
 
