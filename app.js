@@ -347,18 +347,18 @@ try {
   const conLai = tongThu - tongChi;
 
   // Phần toast chi tiết
-  const fullInfo = `✈️ ${ten} - 👥 ${soThanhVien} thành viên<br>📍 Địa điểm: ${dia_diem} - 📝 ${mo_ta || "Không có mô tả"}`;
+  const fullInfo = `✈️ Tour ${ten} - 👥 ${soThanhVien} thành viên<br>📍 Địa điểm: ${dia_diem} - 📝 ${mo_ta || "Không có mô tả"}`;
 
   // Tạo phần tử hiển thị
   infoDiv = document.createElement("div");
   infoDiv.className = "tour-info";
   infoDiv.innerHTML = `
-    ✈️ Tour "<a href='#' 
-      onclick="showToast(\`${fullInfo.replace(/`/g, "\\`").replace(/\n/g, "\\n")}\`, '', true)"
+    ✈️ Tour <a href='#' 
+      onclick="showToast(\`${fullInfo.replace(/`/g, "\\`").replace(/\n/g, "\\n")}\`, '', true)
       style="color: #007bff; font-weight: bold; text-decoration: none;"
     >${ten}</a>" – 👥 ${soThanhVien} thành viên<br>
     💰 Tổng thu: <b>${tongThu.toLocaleString()} ₫</b> – 💸 Tổng chi: <b>${tongChi.toLocaleString()} ₫</b> 
-    (<span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>)
+    <br><span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>
   `;
 } catch (err) {
   console.error("Lỗi lấy thông tin tour:", err.message);
