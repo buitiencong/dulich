@@ -643,7 +643,7 @@ function submitThemTour() {
   saveToLocal();        // Lưu DB vào localforage
   closeThemTour();      // Đóng form
   loadTour(newTourId);  // Load lại tab, chuyển sang tour vừa tạo
-  showToast(`Đã thêm tour "${ten}" thành công!`, '', true);
+  showToast(`Đã thêm tour "${ten}"`, '', true);
 
   // Gợi ý thêm thành viên nếu chưa có
   setTimeout(() => {
@@ -716,6 +716,11 @@ function submitSuaTour() {
     return;
   }
 
+  // Lấy tên cũ trước khi cập nhật
+  const tourResult = db.exec(`SELECT tour_ten FROM Tour WHERE tour_id = ?`, [tourId]);
+  const oldName = tourResult[0]?.values[0]?.[0] || "tour";
+
+  // Cập nhật thông tin tour
   db.run(`
     UPDATE Tour
     SET tour_ten = ?, tour_ngay_di = ?, tour_ngay_ve = ?, tour_dia_diem = ?, tour_mo_ta = ?
@@ -725,7 +730,11 @@ function submitSuaTour() {
   saveToLocal();
   closeSuaTour();
   loadTour(tourId); // Reload lại tab
+
+  // Hiển thị toast thông báo
+  showToast(`Đã sửa tour "${oldName}" thành "${ten}"`, '', true);
 }
+
 
 // Mở form xoá tour
 function handleXoaTour() {
@@ -782,7 +791,7 @@ function submitXoaTour() {
   checkIfNoTours?.();
 
   // Hiển thị Toast sau khi xoá
-  showToast(`Đã xoá tour "${tourName}" thành công!`, '', true);
+  showToast(`Đã xoá tour "${tourName}"`, '', true);
 }
 
 
@@ -879,6 +888,10 @@ function submitThemThanhVien() {
   saveToLocal();
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
+  // ✅ Hiển thị toast
+  showToast(`Đã thêm thành viên "${ten}"`, '', true);
+
+  // Reset form
   tenInput.value = "";
   sdtInput.value = "";
   tyleInput.value = "100";
@@ -886,6 +899,7 @@ function submitThemThanhVien() {
   soTienInput.value = "";
   tenInput.focus();
 }
+
 
 
 function handleSuaThanhVien() {
