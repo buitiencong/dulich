@@ -354,11 +354,11 @@ try {
   infoDiv.className = "tour-info";
   infoDiv.innerHTML = `
     ✈️ Tour <a href='#' 
-      onclick="showToast(\`${fullInfo.replace(/`/g, "\\`").replace(/\n/g, "\\n")}\`, '', true)
+      onclick="showToast(\`${fullInfo.replace(/`/g, "\\`")}\`, '', true)"
       style="color: #007bff; font-weight: bold; text-decoration: none;"
-    >${ten}</a>" – 👥 ${soThanhVien} thành viên<br>
+    >${ten}</a> – 👥 ${soThanhVien} thành viên<br>
     💰 Tổng thu: <b>${tongThu.toLocaleString()} ₫</b> – 💸 Tổng chi: <b>${tongChi.toLocaleString()} ₫</b> 
-    <br><span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>
+    (<span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>)
   `;
 } catch (err) {
   console.error("Lỗi lấy thông tin tour:", err.message);
