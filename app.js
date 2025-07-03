@@ -328,38 +328,39 @@ function showTourData(tourId, selectedSubTab = 1) {
   let infoDiv = null;
 try {
   const tourInfo = db.exec(`
-    SELECT tour_ten, tour_dia_diem
+    SELECT tour_ten, tour_dia_diem, tour_mo_ta
     FROM Tour WHERE tour_id = ${tourId}
   `);
   const ten = tourInfo[0]?.values[0]?.[0] || "Không rõ";
-  const dia_diem = tourInfo[0]?.values[0]?.[1] || "…";
+  const dia_diem = tourInfo[0]?.values[0]?.[1] || "Chưa rõ";
+  const mo_ta = tourInfo[0]?.values[0]?.[2] || "";
 
-  // Đếm số thành viên
   const tvCountRes = db.exec(`SELECT COUNT(*) FROM ThanhVien WHERE tv_tour_id = ${tourId}`);
   const soThanhVien = tvCountRes[0]?.values[0][0] || 0;
 
-  // Tổng thu
   const thuRes = db.exec(`SELECT SUM(dg_so_tien) FROM DongGop WHERE dg_tour_id = ${tourId}`);
   const tongThu = thuRes[0]?.values[0][0] || 0;
 
-  // Tổng chi
   const chiRes = db.exec(`SELECT SUM(ct_so_tien) FROM ChiTieu WHERE ct_tour_id = ${tourId}`);
   const tongChi = chiRes[0]?.values[0][0] || 0;
 
-  // Phần còn lại
   const conLai = tongThu - tongChi;
+
+  // Phần toast chi tiết
+  const fullInfo = `🧳 ${ten}\n📍 Địa điểm: ${dia_diem}\n👥 Thành viên: ${soThanhVien}\n📝 ${mo_ta || "Không có mô tả"}`;
 
   // Tạo phần tử hiển thị
   infoDiv = document.createElement("div");
   infoDiv.className = "tour-info";
   infoDiv.innerHTML = `
-    ✈️ Tour <b>${ten}</b> – 📍 ${dia_diem} – 👥 ${soThanhVien} thành viên<br>
+    🧳 Tour "<a href='#' onclick="showToast(\`${fullInfo.replace(/`/g, "\\`").replace(/\n/g, "\\n")}\`, '', true)">${ten}</a>" – 👥 ${soThanhVien} thành viên<br>
     💰 Tổng thu: <b>${tongThu.toLocaleString()} ₫</b> – 💸 Tổng chi: <b>${tongChi.toLocaleString()} ₫</b> 
     (<span style="color:${conLai >= 0 ? 'green' : 'red'}">Còn lại: ${conLai.toLocaleString()} ₫</span>)
   `;
 } catch (err) {
   console.error("Lỗi lấy thông tin tour:", err.message);
 }
+
 
   // Vùng tab radio
   const tabWrapper = document.createElement("div");
