@@ -643,7 +643,7 @@ function submitThemTour() {
   saveToLocal();        // Lưu DB vào localforage
   closeThemTour();      // Đóng form
   loadTour(newTourId);  // Load lại tab, chuyển sang tour vừa tạo
-  showToast(`Đã thêm tour "${ten}"`, '', true);
+  showToast(`Đã thêm tour ${ten}`, '', true);
 
   // Gợi ý thêm thành viên nếu chưa có
   setTimeout(() => {
@@ -732,7 +732,7 @@ function submitSuaTour() {
   loadTour(tourId); // Reload lại tab
 
   // Hiển thị toast thông báo
-  showToast(`Đã sửa tour "${oldName}" thành "${ten}"`, '', true);
+  showToast(`Đã sửa tour ${oldName} thành ${ten}`, '', true);
 }
 
 
@@ -791,7 +791,7 @@ function submitXoaTour() {
   checkIfNoTours?.();
 
   // Hiển thị Toast sau khi xoá
-  showToast(`Đã xoá tour "${tourName}"`, '', true);
+  showToast(`Đã xoá tour ${tourName}`, '', true);
 }
 
 
@@ -889,7 +889,7 @@ function submitThemThanhVien() {
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
   // ✅ Hiển thị toast
-  showToast(`Đã thêm thành viên "${ten}"`, '', true, 'top');
+  showToast(`Đã thêm thành viên ${ten}`, '', true, 'top');
 
   // Reset form
   tenInput.value = "";
@@ -1006,7 +1006,7 @@ function submitSuaThanhVien() {
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
   // ✅ Hiển thị toast
-  showToast(`Đã sửa "${oldName}" thành "${newName}"`, '', true, 'top');
+  showToast(`Đã sửa ${oldName} thành ${newName}`, '', true);
 }
 
 
@@ -1087,7 +1087,7 @@ function submitXoaThanhVien() {
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
   // Hiển thị toast
-  showToast(`Đã xoá thành viên "${ten}"`, '', true);
+  showToast(`Đã xoá thành viên ${ten}`, '', true);
 }
 
 
@@ -1189,7 +1189,7 @@ function submitThu() {
   loadTour(tourId, 2); // chọn lại tab "Thu"
 
   // ✅ Hiển thị toast
-  showToast(`Đã thu "${ten}" ${formatted}`, '', true);
+  showToast(`Đã thu ${ten} ${formatted}`, '', true);
 }
 
 
@@ -1283,7 +1283,7 @@ function submitChi() {
 
   // ✅ Hiển thị toast
   const formatted = soTien.toLocaleString("vi-VN") + "đ";
-  showToast(`Đã thêm "${tenKhoan}" ${formatted}`, '', true);
+  showToast(`Đã thêm ${tenKhoan} ${formatted}`, '', true);
 }
 
 
@@ -1465,13 +1465,10 @@ function attachCurrencyFormatter(selector) {
 function showToast(message, svgIcon = '', centered = false, position = 'bottom') {
   const toast = document.createElement('div');
 
-  // Xác định vị trí top hoặc bottom
-  const verticalPosition = position === 'top' ? 'top: 20px;' : 'bottom: 20px;';
-
+  // Tạo element hiển thị Toast
   toast.innerHTML = `
     <div style="
       position: fixed;
-      ${verticalPosition}
       left: 50%;
       transform: translateX(-50%);
       min-width: 300px;
@@ -1493,6 +1490,21 @@ function showToast(message, svgIcon = '', centered = false, position = 'bottom')
   `;
 
   const el = toast.firstElementChild;
+
+  // 👉 Xác định vị trí hiển thị
+  if (position === 'top') {
+    const active = document.activeElement;
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+      const rect = active.getBoundingClientRect();
+      const top = Math.max(rect.top - 60, 10); // tránh đè lên notch, padding 10px
+      el.style.top = `${top}px`;
+    } else {
+      el.style.top = '20px';
+    }
+  } else {
+    el.style.bottom = '20px';
+  }
+
   document.body.appendChild(el);
 
   // Tự động biến mất sau 10 giây
@@ -1501,6 +1513,7 @@ function showToast(message, svgIcon = '', centered = false, position = 'bottom')
     setTimeout(() => el.remove(), 500);
   }, 10000);
 }
+
 
 
 // Hàm đóng Form hướng dẫn thêm vào màn hình chính
