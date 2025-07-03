@@ -1264,6 +1264,7 @@ function handleChi() {
 
   // ✅ Focus vào ô tên khoản chi
   document.getElementById("chi-ten-khoan").focus();
+  document.getElementById("chi-ten-khoan").addEventListener("input", goiYDanhMucTuDong);
 }
 
 
@@ -1567,4 +1568,37 @@ function getLocalDatetimeInputValue() {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // chuyển UTC → local
   return now.toISOString().slice(0, 16); // "yyyy-MM-ddTHH:mm"
+}
+
+
+// 🎯 Từ khoá gợi ý danh mục
+const tuKhoaDanhMuc = {
+  "Di chuyển": ["taxi", "grab", "xe", "xăng", "vé xe", "tàu", "máy bay", "ô tô", "xe điện", "xe ôm", "bus", "gửi xe", "đi lại", "di chuyển", "trạm", "cầu", "phà", "thuyền"],
+  "Ăn uống": ["ăn", "cơm", "phở", "bún", "nước", "trà", "cà phê", "đồ uống", "đồ ăn", "nhậu", "lẩu", "bánh mì", "nhà hàng", "buffet"],
+  "Lưu trú": ["khách sạn", "nghỉ", "homestay", "resort", "phòng"],
+  "Giải trí": ["vé", "tham quan", "vui chơi", "game", "xem phim", "karaoke", "công viên", "bảo tàng", "safari"],
+  "Chi phí khác": ["mua", "thuê", "khác", "chi thêm", "thuốc", "quà", "lưu niệm"]
+};
+
+// 🎯 Tự động gợi ý danh mục khi nhập tên khoản chi
+function goiYDanhMucTuDong() {
+  const tenKhoan = document.getElementById("chi-ten-khoan").value.toLowerCase();
+  const select = document.getElementById("chi-danh-muc-select");
+
+  let timThay = false;
+  for (const [danhMuc, tuKhoaList] of Object.entries(tuKhoaDanhMuc)) {
+    for (const tu of tuKhoaList) {
+      if (tenKhoan.includes(tu)) {
+        for (let i = 0; i < select.options.length; i++) {
+          if (select.options[i].textContent === danhMuc) {
+            select.selectedIndex = i;
+            timThay = true;
+            break;
+          }
+        }
+        if (timThay) break;
+      }
+    }
+    if (timThay) break;
+  }
 }
