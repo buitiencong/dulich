@@ -12,7 +12,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   /* background: linear-gradient(to bottom, #AAEBF7 0%, white 21.3%, white 80.7%, #AAEBF7 100%);   */
   padding: 10px;
-  background: #7dd3fc;
+  /* background: #7dd3fc; */
+  background: #B4EBE6;
 }
 
 /* Nếu có container bao quanh, đảm bảo nó cũng full width */

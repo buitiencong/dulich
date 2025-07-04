@@ -2,14 +2,14 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>📊 Thống kê Tour</title>
+  <title>Thống kê</title>
   <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
-    body { padding: 20px; background: #e0f7fa; }
+    body { padding: 20px; background: #B4EBE6; }
     .section { margin-bottom: 30px; }
     h2 { margin-top: 0; }
     .stat-grid {
@@ -93,48 +93,49 @@
     border-radius: 4px;
   }
 
-.header-row {
-  position: relative;
-  margin-bottom: 24px;
-  text-align: center;
-}
+  .header-row {
+    position: relative;
+    margin-bottom: 24px;
+    text-align: center;
+  }
 
-.header-row h1 {
-  margin: 0;
-  font-size: 28px;
-}
+  .header-row h1 {
+    margin: 0;
+    font-size: 28px;
+  }
 
-.back-button {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  background: #456882;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  text-decoration: none;
-  font-family: inherit;
-  transition: background 0.2s;
-  line-height: 1;
-}
+  .back-button {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 36px;
+    background: #456882;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.2s;
+    padding: 0;
+  }
+  .back-button svg {
+    margin-left: 5px;
+    margin-top: 0px;
+  }
 
-.back-button:hover {
-  background: #005f99;
-}
-
-
-
+  .back-button:hover {
+    background: #005f99;
+  }
 
   </style>
 </head>
 <body>
   <div class="header-row">
     <a href="index.html" class="back-button">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
         class="lucide lucide-arrow-big-left-icon lucide-arrow-big-left" style="margin-right: 6px;">
         <path d="M18 15h-6v4l-7-7 7-7v4h6v6z" />
