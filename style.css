@@ -13,7 +13,7 @@ body {
   /* background: linear-gradient(to bottom, #AAEBF7 0%, white 21.3%, white 80.7%, #AAEBF7 100%);   */
   padding: 10px;
   /* background: #7dd3fc; Xanh */
-  background: linear-gradient(90deg,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
+  background: conic-gradient(from 210deg, rgba(197, 187, 184, 1.000) 0.000deg, rgba(197, 187, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 24.000deg, rgba(184, 181, 184, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 48.000deg, rgba(169, 175, 183, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 72.000deg, rgba(154, 168, 181, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 96.000deg, rgba(139, 161, 179, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 120.000deg, rgba(125, 152, 175, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 144.000deg, rgba(112, 144, 171, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 168.000deg, rgba(101, 135, 166, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 192.000deg, rgba(92, 126, 161, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 216.000deg, rgba(85, 117, 155, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 240.000deg, rgba(81, 108, 148, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 264.000deg, rgba(79, 99, 141, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 288.000deg, rgba(80, 90, 133, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 312.000deg, rgba(84, 83, 125, 1.000) 336.000deg, rgba(91, 75, 116, 1.000) 336.000deg 360.000deg);
 }
 
 /* Nếu có container bao quanh, đảm bảo nó cũng full width */
