@@ -74,7 +74,7 @@ function showStats(tourId) {
     // Dòng chữ tên danh mục
     const nameEl = document.createElement("div");
     nameEl.className = "category-name";
-    nameEl.textContent = `${name} – ${percent}%`;
+    nameEl.innerHTML = `${name}: <span style="font-weight: normal; color: green;">${amount.toLocaleString()} ₫</span> – ${percent}%`;
 
     // Wrapper chứa progress, canh lề 1px giống header
     const progressWrapper = document.createElement("div");

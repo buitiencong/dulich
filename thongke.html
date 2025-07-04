@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>📊 Thống kê Tour</title>
+  <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
@@ -79,10 +80,71 @@
     width: 100%;
     box-sizing: border-box;
   }
+
+  /* Giao diện giống modal */
+  #tourSelect {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    font-size: 20px;
+    font-family: inherit;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+.header-row {
+  position: relative;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.header-row h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  background: #456882;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+  font-family: inherit;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.back-button:hover {
+  background: #005f99;
+}
+
+
+
+
   </style>
 </head>
 <body>
-  <h1>📊 Thống kê chi tiết Tour</h1>
+  <div class="header-row">
+    <a href="index.html" class="back-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-arrow-big-left-icon lucide-arrow-big-left" style="margin-right: 6px;">
+        <path d="M18 15h-6v4l-7-7 7-7v4h6v6z" />
+      </svg>
+      Quay lại
+    </a>
+
+
+    <h1>📊 Thống kê</h1>
+  </div>
 
   <div class="section">
     <label for="tourSelect">Chọn Tour:</label>
