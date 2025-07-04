@@ -138,5 +138,14 @@ function formatDateTime(dt) {
   if (!dt) return "";
   const date = new Date(dt);
   if (isNaN(date.getTime())) return dt;
-  return date.toLocaleString("vi-VN");
+
+  // Định dạng giờ:phút không có giây
+  return date.toLocaleString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
+
