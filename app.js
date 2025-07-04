@@ -1339,7 +1339,7 @@ function submitChi() {
 
   // ✅ Hiển thị toast
   const formatted = soTien.toLocaleString("vi-VN") + "đ";
-  showToast(`Đã thêm ${tenKhoan} ${formatted}`, '', true);
+  showToast(`Đã thêm khoản chi ${tenKhoan} ${formatted}`, '', true);
 }
 
 
@@ -1633,7 +1633,7 @@ const tuKhoaDanhMuc = {
   "Di chuyển": ["taxi", "grab", "xe", "xăng", "vé xe", "tàu", "máy bay", "ô tô", "xe điện", "xe ôm", "bus", "gửi xe", "đi lại", "di chuyển", "trạm", "cầu", "phà", "thuyền"],
   "Ăn uống": ["ăn", "uống", "cơm", "phở", "bún", "nước", "trà", "cà phê", "đồ uống", "đồ ăn", "nhậu", "lẩu", "bánh mì", "nhà hàng", "buffet"],
   "Lưu trú": ["khách sạn", "nghỉ", "homestay", "resort", "phòng"],
-  "Giải trí": ["vé", "tham quan", "vui chơi", "game", "xem phim", "karaoke", "công viên", "bảo tàng", "safari"],
+  "Giải trí": ["vé", "tham quan", "chơi", "game", "xem", "karaoke", "công viên", "bảo tàng", "safari"],
   "Chi phí khác": ["mua", "thuê", "khác", "chi thêm", "thuốc", "quà", "lưu niệm"]
 };
 

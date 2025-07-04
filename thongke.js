@@ -32,24 +32,20 @@ function loadTourList() {
 }
 
 function showStats(tourId) {
-  // Thành viên
   const tvCount = db.exec(`SELECT COUNT(*) FROM ThanhVien WHERE tv_tour_id = ${tourId}`)[0]?.values[0][0] || 0;
   document.getElementById("stat-members").textContent = tvCount;
 
-  // Tổng thu
   const income = db.exec(`SELECT SUM(dg_so_tien) FROM DongGop WHERE dg_tour_id = ${tourId}`)[0]?.values[0][0] || 0;
   document.getElementById("stat-income").textContent = income.toLocaleString() + " ₫";
 
-  // Tổng chi
   const expense = db.exec(`SELECT SUM(ct_so_tien) FROM ChiTieu WHERE ct_tour_id = ${tourId}`)[0]?.values[0][0] || 0;
   document.getElementById("stat-expense").textContent = expense.toLocaleString() + " ₫";
 
-  // Còn lại
   const balance = income - expense;
-  document.getElementById("stat-balance").textContent = (balance >= 0 ? "+" : "") + balance.toLocaleString() + " ₫";
-  document.getElementById("stat-balance").style.color = balance >= 0 ? "green" : "red";
+  const balanceEl = document.getElementById("stat-balance");
+  balanceEl.textContent = (balance >= 0 ? "+" : "") + balance.toLocaleString() + " ₫";
+  balanceEl.style.color = balance >= 0 ? "green" : "red";
 
-  // Phân tích danh mục chi
   const categoryStats = db.exec(`
     SELECT dm.dm_id, dm.dm_ten, SUM(ct.ct_so_tien)
     FROM ChiTieu ct
@@ -60,12 +56,12 @@ function showStats(tourId) {
 
   const list = categoryStats[0]?.values || [];
   const total = list.reduce((sum, [, , amount]) => sum + amount, 0);
-
   const container = document.getElementById("categoryStats");
   container.innerHTML = "";
 
   list.forEach(([dm_id, name, amount]) => {
     const percent = total > 0 ? Math.round((amount / total) * 100) : 0;
+
     const block = document.createElement("div");
     block.className = "category-block";
 
@@ -75,22 +71,38 @@ function showStats(tourId) {
       details.classList.toggle("open");
     };
 
-    const topRow = document.createElement("div");
-    topRow.className = "category-top";
-
+    // Dòng chữ tên danh mục
     const nameEl = document.createElement("div");
     nameEl.className = "category-name";
     nameEl.textContent = `${name} – ${percent}%`;
 
+    // Wrapper chứa progress, canh lề 1px giống header
+    const progressWrapper = document.createElement("div");
+    progressWrapper.style.paddingLeft = "0px";
+    progressWrapper.style.paddingRight = "0px";
+    progressWrapper.style.marginTop = "6px";
+    progressWrapper.style.boxSizing = "border-box";
+
     const progress = document.createElement("div");
     progress.className = "progress-bar-bg";
+    progress.style.width = "100%";
+
     const fill = document.createElement("div");
     fill.className = "progress-bar-fill";
     fill.style.width = `${percent}%`;
+
     progress.appendChild(fill);
+    progressWrapper.appendChild(progress);
+
+    // Gom vào topRow
+    const topRow = document.createElement("div");
+    topRow.style.display = "flex";
+    topRow.style.flexDirection = "column";
+    topRow.style.flex = "1";
 
     topRow.appendChild(nameEl);
-    topRow.appendChild(progress);
+    topRow.appendChild(progressWrapper);
+
     header.appendChild(topRow);
 
     const details = document.createElement("div");
@@ -108,7 +120,7 @@ function showStats(tourId) {
       const div = document.createElement("div");
       div.className = "expense-item";
       const [ten, sotien, thoigian, ghichu] = row;
-      div.textContent = `${i + 1}. ${ten} - ${sotien.toLocaleString()} ₫ - ${formatDateTime(thoigian)} - ${ghichu || ""}`;
+      div.textContent = `${i + 1}. ${ten} - ${sotien.toLocaleString()} ₫ - ${formatDateTime(thoigian)}${ghichu ? " - " + ghichu : ""}`;
       details.appendChild(div);
     });
 
@@ -117,6 +129,10 @@ function showStats(tourId) {
     container.appendChild(block);
   });
 }
+
+
+
+
 
 function formatDateTime(dt) {
   if (!dt) return "";
