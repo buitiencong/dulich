@@ -72,6 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
   attachCurrencyFormatter("#thu-so-tien");
   attachCurrencyFormatter("#chi-so-tien");
   attachCurrencyFormatter("#dg-so-tien");
+  // Gắn format % cho input Tỷ lệ
+  attachPercentageFormatter("#tv-tyle");
+  attachPercentageFormatter("#edit-tv-tyle");
+
 
   // Khi cả DOM và DB đã sẵn sàng thì xử lý
   document.addEventListener("sqlite-ready", () => {
@@ -872,7 +876,16 @@ function handleThemThanhVien() {
 
   document.getElementById("tv-ten").value = "";
   document.getElementById("tv-sdt").value = "";
-  document.getElementById("tv-tyle").value = "100";
+  const tyleInput = document.getElementById("tv-tyle");
+tyleInput.value = "100";
+attachPercentageFormatter("#tv-tyle");
+
+// ⚠️ Ép chạy formatter ngay sau khi set value
+const raw = tyleInput.value.replace(/[^\d]/g, "");
+if (raw) {
+  tyleInput.value = raw + " %";
+}
+
   document.getElementById("tv-gioitinh").value = "nam";
   document.getElementById("tv-sotien").value = "";
 
@@ -905,9 +918,15 @@ function submitThemThanhVien() {
   const tenRaw = tenInput.value.trim();
   const ten = capitalizeWords(tenRaw);
   const sdt = sdtInput.value.trim();
-  const tyle = parseInt(tyleInput.value);
+
+  // ✅ Tỉ lệ: loại bỏ mọi ký tự không phải số (%), rồi chia cho 100
+  const rawTyLe = tyleInput.value.replace(/[^\d]/g, "");
+  const tyle = parseInt(rawTyLe);
+  const tyLeDong = isNaN(tyle) ? 1 : tyle / 100;
+
   const gioiTinh = gioiTinhSelect.value;
 
+  // ✅ Số tiền: loại bỏ ký tự, chuyển thành số
   const rawTien = soTienInput.value.replace(/[^\d]/g, "");
   const soTien = parseInt(rawTien) || 0;
 
@@ -916,11 +935,13 @@ function submitThemThanhVien() {
     return;
   }
 
+  // ✅ Thêm thành viên
   db.run(`
     INSERT INTO ThanhVien (tv_tour_id, tv_ho_ten, tv_gioi_tinh, tv_sdt, tv_ty_le_dong)
     VALUES (?, ?, ?, ?, ?)
-  `, [tourId, ten, gioiTinh, sdt, isNaN(tyle) ? 1 : tyle / 100]);
+  `, [tourId, ten, gioiTinh, sdt, tyLeDong]);
 
+  // ✅ Nếu có đóng góp ban đầu, thêm vào bảng DongGop
   if (soTien > 0) {
     const tvId = db.exec(`SELECT last_insert_rowid()`)[0].values[0][0];
     db.run(`
@@ -930,23 +951,26 @@ function submitThemThanhVien() {
   }
 
   saveToLocal();
-  loadTour(tourId, 1); // 👉 quay lại tab Thành viên
+  loadTour(tourId, 1); // 👉 Quay lại tab Thành viên
 
-  // ✅ Lấy tên tour từ dropdown
+  // ✅ Tên tour để hiển thị toast
   const tourSelect = document.getElementById("tv-tour-select");
   const tourTen = tourSelect.options[tourSelect.selectedIndex].textContent;
 
-  // ✅ Hiển thị toast
   showToast(`Đã thêm ${ten} vào tour ${tourTen}`, '', true, 'top');
 
-  // Reset form
+  // ✅ Reset form
   tenInput.value = "";
   sdtInput.value = "";
-  tyleInput.value = "100";
   gioiTinhSelect.value = "nam";
   soTienInput.value = "";
+
+  // ✅ Reset lại "100 %" cho tỷ lệ sau submit
+  tyleInput.value = "100 %";
+
   tenInput.focus();
 }
+
 
 
 
@@ -975,8 +999,19 @@ function handleSuaThanhVien() {
 
   setTimeout(() => {
     loadThanhVienForEdit();
+
+    // ✅ Gắn formatter sau khi form đã được nạp
+    const tyleInput = document.getElementById("edit-tv-tyle");
+    attachPercentageFormatter("#edit-tv-tyle");
+
+    // ✅ Nếu đã có sẵn giá trị số thì ép format lại thành "xx %"
+    const raw = tyleInput.value.replace(/[^\d]/g, "");
+    if (raw) {
+      tyleInput.value = raw + " %";
+    }
   }, 50);
 }
+
 
 function loadThanhVienForEdit() {
   const tourId = document.getElementById("edit-tv-tour").value;
@@ -1030,7 +1065,12 @@ function submitSuaThanhVien() {
   const rawName = document.getElementById("edit-tv-name").value.trim();
   const newName = capitalizeWords(rawName);
   const sdt = document.getElementById("edit-tv-sdt").value.trim();
-  const tyle = parseInt(document.getElementById("edit-tv-tyle").value.trim()) || 100;
+
+  // ✅ Loại bỏ ký tự không phải số trong tỉ lệ (ví dụ: "85 %" -> 85)
+  const tyleRaw = document.getElementById("edit-tv-tyle").value.replace(/[^\d]/g, "");
+  const tyle = parseInt(tyleRaw);
+  const tyLeDong = isNaN(tyle) ? 1 : tyle / 100;
+
   const gioiTinh = document.getElementById("edit-tv-gioitinh").value;
   const tourId = document.getElementById("edit-tv-tour").value;
 
@@ -1039,22 +1079,21 @@ function submitSuaThanhVien() {
     return;
   }
 
-  // Lấy tên cũ trước khi sửa
+  // ✅ Lấy tên cũ trước khi sửa
   const result = db.exec(`SELECT tv_ho_ten FROM ThanhVien WHERE tv_id = ?`, [tvId]);
   const oldName = result[0]?.values[0]?.[0] || "thành viên";
 
-  // Cập nhật thông tin
+  // ✅ Cập nhật thông tin thành viên
   db.run(`
     UPDATE ThanhVien
     SET tv_ho_ten = ?, tv_sdt = ?, tv_ty_le_dong = ?, tv_gioi_tinh = ?
     WHERE tv_id = ?
-  `, [newName, sdt, tyle / 100, gioiTinh, tvId]);
+  `, [newName, sdt, tyLeDong, gioiTinh, tvId]);
 
   saveToLocal();
   closeSuaThanhVien();
   loadTour(tourId, 1); // 👉 quay lại tab Thành viên
 
-  // ✅ Hiển thị toast
   showToast(`Đã sửa ${oldName} thành ${newName}`, '', true);
 }
 
@@ -1533,6 +1572,36 @@ function attachCurrencyFormatter(selector) {
 
   input.dataset.hasCurrencyListener = "true";
 }
+
+// Thêm ký tự % sau Tỷ lệ
+function attachPercentageFormatter(selector) {
+  const input = document.querySelector(selector);
+  if (!input || input.dataset.hasPercentageListener) return;
+
+  // Gắn sự kiện input
+  input.addEventListener("input", function () {
+    const raw = this.value.replace(/[^\d]/g, "");
+    if (!raw) {
+      this.value = "";
+      return;
+    }
+
+    const formatted = raw + " %";
+
+    const cursorPos = this.selectionStart;
+    const prevLength = this.value.length;
+
+    this.value = formatted;
+
+    const nextLength = this.value.length;
+    let newCursorPos = cursorPos + (nextLength - prevLength);
+    newCursorPos = Math.min(newCursorPos, this.value.length - 2);
+    this.setSelectionRange(newCursorPos, newCursorPos);
+  });
+
+  input.dataset.hasPercentageListener = "true";
+}
+
 
 
 
