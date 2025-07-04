@@ -7,26 +7,38 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"> -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
   <style>
-    /* body { padding: 20px; background: linear-gradient(45deg, rgba(142, 197, 252, 1.000) 0.000%, rgba(141, 211, 255, 1.000) 25.000%, rgba(161, 216, 255, 1.000) 50.000%, rgba(193, 210, 255, 1.000) 75.000%, rgba(224, 195, 255, 1.000) 100.000%); } */
-    /* body {
-      background: linear-gradient(45deg, rgba(142, 197, 252, 1.000) 0%, rgba(141, 211, 255, 1.000) 25%, rgba(161, 216, 255, 1.000) 50%, rgba(193, 210, 255, 1.000) 75%, rgba(224, 195, 255, 1.000) 100%);
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-    } */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(45deg, rgba(142, 197, 252, 1.000), rgba(224, 195, 255, 1.000));
-  z-index: -1;
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      position: relative;
+    }
 
+    /* Gradient nền tràn toàn màn hình */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(45deg,
+        rgba(142, 197, 252, 1.000) 0%,
+        rgba(141, 211, 255, 1.000) 25%,
+        rgba(161, 216, 255, 1.000) 50%,
+        rgba(193, 210, 255, 1.000) 75%,
+        rgba(224, 195, 255, 1.000) 100%);
+      z-index: -1;
+    }
+
+    /* Vùng chứa nội dung nằm trong safe-area */
+    .safe-container {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+      padding-left: calc(env(safe-area-inset-left, 0px) + 12px);
+      padding-right: calc(env(safe-area-inset-right, 0px) + 12px);
+      box-sizing: border-box;
+    }
 
     .section { margin-bottom: 30px; }
     h2 { margin-top: 0; }
@@ -87,113 +99,110 @@ body::before {
     }
 
     #categoryStats {
-    width: 100%;
-    /* max-width: 600px; */
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
+      width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
 
-  /* Tùy chọn: giữ cho thanh progress không tràn */
-  .progress-bar-bg {
-    width: 100%;
-    box-sizing: border-box;
-  }
+    .progress-bar-bg {
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-  /* Giao diện giống modal */
-  #tourSelect {
-    width: 100%;
-    padding: 8px;
-    margin-top: 4px;
-    font-size: 20px;
-    font-family: inherit;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
+    #tourSelect {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      font-size: 20px;
+      font-family: inherit;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-  .header-row {
-    position: relative;
-    margin-bottom: 24px;
-    text-align: center;
-  }
+    .header-row {
+      position: relative;
+      margin-bottom: 24px;
+      text-align: center;
+    }
 
-  .header-row h1 {
-    margin: 0;
-    font-size: 28px;
-  }
+    .header-row h1 {
+      margin: 0;
+      font-size: 28px;
+    }
 
-  .back-button {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 36px;
-    background: #456882;
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    transition: background 0.2s;
-    padding: 0;
-  }
-  .back-button svg {
-    margin-left: 5px;
-    margin-top: 0px;
-  }
+    .back-button {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 36px;
+      background: #456882;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.2s;
+      padding: 0;
+    }
 
-  .back-button:hover {
-    background: #005f99;
-  }
+    .back-button svg {
+      margin-left: 5px;
+    }
 
+    .back-button:hover {
+      background: #005f99;
+    }
   </style>
 </head>
+
 <body>
-  <div class="header-row">
-    <a href="index.html" class="back-button">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="lucide lucide-arrow-big-left-icon lucide-arrow-big-left" style="margin-right: 6px;">
-        <path d="M18 15h-6v4l-7-7 7-7v4h6v6z" />
-      </svg>
-    </a>
+  <div class="safe-container">
+    <div class="header-row">
+      <a href="index.html" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="lucide lucide-arrow-big-left-icon lucide-arrow-big-left" style="margin-right: 6px;">
+          <path d="M18 15h-6v4l-7-7 7-7v4h6v6z" />
+        </svg>
+      </a>
+      <h1>Thống kê</h1>
+    </div>
 
+    <div class="section">
+      <label for="tourSelect">Chọn Tour:</label>
+      <select id="tourSelect"></select>
+    </div>
 
-    <h1>Thống kê</h1>
-  </div>
-
-  <div class="section">
-    <label for="tourSelect">Chọn Tour:</label>
-    <select id="tourSelect"></select>
-  </div>
-
-  <div class="section">
-    <h2>Tổng quan</h2>
-    <div class="stat-grid">
-      <div class="stat-card">
-        <h3>👥 Thành viên</h3>
-        <p id="stat-members">--</p>
-      </div>
-      <div class="stat-card">
-        <h3>💰 Tổng thu</h3>
-        <p id="stat-income">--</p>
-      </div>
-      <div class="stat-card">
-        <h3>💸 Tổng chi</h3>
-        <p id="stat-expense">--</p>
-      </div>
-      <div class="stat-card">
-        <h3>📦 Còn lại</h3>
-        <p id="stat-balance">--</p>
+    <div class="section">
+      <h2>Tổng quan</h2>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <h3>👥 Thành viên</h3>
+          <p id="stat-members">--</p>
+        </div>
+        <div class="stat-card">
+          <h3>💰 Tổng thu</h3>
+          <p id="stat-income">--</p>
+        </div>
+        <div class="stat-card">
+          <h3>💸 Tổng chi</h3>
+          <p id="stat-expense">--</p>
+        </div>
+        <div class="stat-card">
+          <h3>📦 Còn lại</h3>
+          <p id="stat-balance">--</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="section">
-    <h2>Chi tiết</h2>
-    <div id="categoryStats"></div>
+    <div class="section">
+      <h2>Chi tiết</h2>
+      <div id="categoryStats"></div>
+    </div>
   </div>
 
   <script src="thongke.js"></script>
