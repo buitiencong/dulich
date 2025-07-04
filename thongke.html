@@ -10,171 +10,172 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
   <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    position: relative;
-  }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      position: relative;
+    }
 
-  /* Gradient nền phủ đầy màn hình kể cả Home Indicator (iOS) */
-  body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100dvh;
-    background: linear-gradient(45deg,
-      rgba(142, 197, 252, 1.000) 0%,
-      rgba(141, 211, 255, 1.000) 25%,
-      rgba(161, 216, 255, 1.000) 50%,
-      rgba(193, 210, 255, 1.000) 75%,
-      rgba(224, 195, 255, 1.000) 100%);
-    z-index: -1;
-  }
+    /* Gradient nền tách thành một div riêng */
+    .gradient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100dvh; /* Sẽ cập nhật bằng JS */
+      background: linear-gradient(45deg,
+        rgba(142, 197, 252, 1.000) 0%,
+        rgba(141, 211, 255, 1.000) 25%,
+        rgba(161, 216, 255, 1.000) 50%,
+        rgba(193, 210, 255, 1.000) 75%,
+        rgba(224, 195, 255, 1.000) 100%);
+      z-index: -1;
+    }
 
-  /* Lớp bao nội dung nằm trong vùng an toàn */
-  .safe-container {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
-    padding-left: calc(env(safe-area-inset-left, 0px) + 12px);
-    padding-right: calc(env(safe-area-inset-right, 0px) + 12px);
-    box-sizing: border-box;
-    min-height: 100dvh;
-  }
+    .safe-container {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+      padding-left: calc(env(safe-area-inset-left, 0px) + 12px);
+      padding-right: calc(env(safe-area-inset-right, 0px) + 12px);
+      box-sizing: border-box;
+      min-height: 100dvh;
+    }
 
-  .section { margin-bottom: 30px; }
-  h2 { margin-top: 0; }
+    .section { margin-bottom: 30px; }
+    h2 { margin-top: 0; }
 
-  .stat-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+    .stat-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
-  .stat-card {
-    flex: 1 1 160px;
-    padding: 12px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: center;
-    cursor: pointer;
-  }
+    .stat-card {
+      flex: 1 1 160px;
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      cursor: pointer;
+    }
 
-  .stat-card h3 {
-    margin: 0;
-    font-size: 18px;
-    color: #007acc;
-  }
+    .stat-card h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #007acc;
+    }
 
-  .stat-card p {
-    margin: 4px 0 0;
-    font-weight: bold;
-    font-size: 16px;
-  }
+    .stat-card p {
+      margin: 4px 0 0;
+      font-weight: bold;
+      font-size: 16px;
+    }
 
-  .category-block {
-    margin-bottom: 16px;
-  }
+    .category-block {
+      margin-bottom: 16px;
+    }
 
-  .category-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    background: #fff;
-    padding: 10px 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    cursor: pointer;
-  }
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
 
-  .category-name {
-    font-weight: bold;
-    color: #007acc;
-  }
+    .category-name {
+      font-weight: bold;
+      color: #007acc;
+    }
 
-  .expense-list {
-    margin-left: 20px;
-    font-size: 14px;
-    color: #333;
-    margin-top: 6px;
-    display: none;
-  }
+    .expense-list {
+      margin-left: 20px;
+      font-size: 14px;
+      color: #333;
+      margin-top: 6px;
+      display: none;
+    }
 
-  .expense-list.open {
-    display: block;
-  }
+    .expense-list.open {
+      display: block;
+    }
 
-  .expense-item {
-    margin: 4px 0;
-  }
+    .expense-item {
+      margin: 4px 0;
+    }
 
-  #categoryStats {
-    width: 100%;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
+    #categoryStats {
+      width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
 
-  .progress-bar-bg {
-    width: 100%;
-    box-sizing: border-box;
-  }
+    .progress-bar-bg {
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-  #tourSelect {
-    width: 100%;
-    padding: 8px;
-    margin-top: 4px;
-    font-size: 20px;
-    font-family: inherit;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
+    #tourSelect {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      font-size: 20px;
+      font-family: inherit;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-  .header-row {
-    position: relative;
-    margin-bottom: 24px;
-    text-align: center;
-  }
+    .header-row {
+      position: relative;
+      margin-bottom: 24px;
+      text-align: center;
+    }
 
-  .header-row h1 {
-    margin: 0;
-    font-size: 28px;
-  }
+    .header-row h1 {
+      margin: 0;
+      font-size: 28px;
+    }
 
-  .back-button {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 36px;
-    background: #456882;
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    transition: background 0.2s;
-    padding: 0;
-  }
+    .back-button {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 36px;
+      background: #456882;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.2s;
+      padding: 0;
+    }
 
-  .back-button svg {
-    margin-left: 5px;
-  }
+    .back-button svg {
+      margin-left: 5px;
+    }
 
-  .back-button:hover {
-    background: #005f99;
-  }
-</style>
-
+    .back-button:hover {
+      background: #005f99;
+    }
+  </style>
 </head>
 
 <body>
+  <!-- Gradient nền -->
+  <div class="gradient-bg"></div>
+
+  <!-- Vùng nội dung nằm trong safe area -->
   <div class="safe-container">
     <div class="header-row">
       <a href="index.html" class="back-button">
@@ -220,6 +221,21 @@
     </div>
   </div>
 
+  <!-- Tải mã xử lý thống kê -->
   <script src="thongke.js"></script>
+
+  <!-- ✅ ĐOẠN JS BẠN CẦN CHÈN THÊM NGAY Ở ĐÂY -->
+  <script>
+    function updateGradientHeight() {
+      const bg = document.querySelector('.gradient-bg');
+      if (bg) {
+        bg.style.height = window.innerHeight + 'px';
+      }
+    }
+
+    window.addEventListener('load', updateGradientHeight);
+    window.addEventListener('resize', updateGradientHeight);
+    window.addEventListener('orientationchange', updateGradientHeight);
+  </script>
 </body>
 </html>
