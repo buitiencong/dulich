@@ -1041,24 +1041,27 @@ function loadThanhVienForEdit() {
 }
 
 function fillOldThanhVienInfo() {
-  const tvSelect = document.getElementById("edit-tv-select");
-  const selectedId = tvSelect.value;
+  const tvId = document.getElementById("edit-tv-select").value;
+  const result = db.exec(`SELECT tv_id, tv_ho_ten, tv_sdt, tv_ty_le_dong, tv_gioi_tinh FROM ThanhVien WHERE tv_id = ?`, [tvId]);
+  const data = result[0]?.values[0];
 
-  if (!selectedId) return;
+  if (!data) return;
 
-  const result = db.exec(`
-    SELECT tv_ho_ten, tv_sdt, tv_ty_le_dong, tv_gioi_tinh
-    FROM ThanhVien
-    WHERE tv_id = ${selectedId}
-  `);
+  document.getElementById("edit-tv-name").value = data[1];
+  document.getElementById("edit-tv-sdt").value = data[2];
 
-  const [ten, sdt, tyle, gioiTinh] = result[0]?.values[0] || [];
+  const tyleInput = document.getElementById("edit-tv-tyle");
 
-  document.getElementById("edit-tv-name").value = ten || "";
-  document.getElementById("edit-tv-sdt").value = sdt || "";
-  document.getElementById("edit-tv-tyle").value = ((tyle || 1) * 100).toFixed(0);
-  document.getElementById("edit-tv-gioitinh").value = gioiTinh || "nam";
+  // ✅ Tính tỷ lệ % từ giá trị gốc (0.75 → 75)
+  const tyLeGoc = typeof data[3] === "number" ? data[3] : 1;
+  const tyLePercent = Math.round(tyLeGoc * 100);
+
+  // ✅ Gán giá trị và định dạng thành "75 %"
+  tyleInput.value = tyLePercent + " %";
+
+  document.getElementById("edit-tv-gioitinh").value = data[4];
 }
+
 
 function submitSuaThanhVien() {
   const tvId = document.getElementById("edit-tv-select").value;
