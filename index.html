@@ -315,50 +315,47 @@
   </div>
 
 
-
-
   <!-- Form Sửa Thành viên -->
-<!-- Form Sửa Thành viên -->
-<div id="suaTvModal" class="modal-overlay" style="display: none;">
-  <div class="modal-content">
-    <h3>✍️ Sửa thông tin thành viên</h3>
+  <div id="suaTvModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <h3>✍️ Sửa thông tin thành viên</h3>
 
-    <label>Chọn tour:
-      <select id="edit-tv-tour" onchange="loadThanhVienForEdit();"></select>
-    </label>
+      <label>Chọn tour:
+        <select id="edit-tv-tour" onchange="loadThanhVienForEdit();"></select>
+      </label>
 
-    <label>Chọn thành viên:
-      <select id="edit-tv-select" onchange="fillOldThanhVienInfo()"></select>
-    </label>
+      <label>Chọn thành viên:
+        <select id="edit-tv-select" onchange="fillOldThanhVienInfo()"></select>
+      </label>
 
-    <!-- Gộp giới tính + tên thành viên -->
-    <label style="display: block;">
-      Tên thành viên:
-      <div style="display: flex; gap: 10px; margin-top: 4px;">
-        <select id="edit-tv-gioitinh" style="flex: 1;">
-          <option value="nam">🙋‍♂️</option>
-          <option value="nu">🙋‍♀️</option>
-          <option value="be_trai">👦</option>
-          <option value="be_gai">👧</option>
-        </select>
-        <input type="text" id="edit-tv-name" style="flex: 5;" />
+      <!-- Gộp giới tính + tên thành viên -->
+      <label style="display: block;">
+        Tên mới:
+        <div style="display: flex; gap: 10px; margin-top: 4px;">
+          <select id="edit-tv-gioitinh" style="flex: 1;">
+            <option value="nam">🙋‍♂️</option>
+            <option value="nu">🙋‍♀️</option>
+            <option value="be_trai">👦</option>
+            <option value="be_gai">👧</option>
+          </select>
+          <input type="text" id="edit-tv-name" style="flex: 5;" />
+        </div>
+      </label>
+
+      <label>Số điện thoại:
+        <input type="tel" inputmode="numeric" id="edit-tv-sdt"/>
+      </label>
+
+      <label>Tỉ lệ đóng góp:
+        <input type="tel" inputmode="numeric" id="edit-tv-tyle" min="0" max="100" />
+      </label>
+
+      <div class="modal-actions">
+        <button onclick="submitSuaThanhVien()">✍️ Cập nhật</button>
+        <button class="btn-cancel" onclick="closeSuaThanhVien()">🔙 Huỷ</button>
       </div>
-    </label>
-
-    <label>Số điện thoại:
-      <input type="tel" inputmode="numeric" id="edit-tv-sdt"/>
-    </label>
-
-    <label>Tỉ lệ đóng góp:
-      <input type="tel" inputmode="numeric" id="edit-tv-tyle" min="0" max="100" />
-    </label>
-
-    <div class="modal-actions">
-      <button onclick="submitSuaThanhVien()">✍️ Cập nhật</button>
-      <button class="btn-cancel" onclick="closeSuaThanhVien()">🔙 Huỷ</button>
     </div>
   </div>
-</div>
 
 
 
