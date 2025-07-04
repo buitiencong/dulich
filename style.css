@@ -14,7 +14,7 @@ body {
   padding: 10px;
   /* background: #7dd3fc; */
   /* background: #CAE8BD; */
-  background: #C4D9FF;
+  background: rgba(142, 197, 252, 1.000);
 }
 
 /* Nếu có container bao quanh, đảm bảo nó cũng full width */
