@@ -170,7 +170,7 @@ function initNewDatabase() {
   `);
 
   // Thêm các danh mục chi mặc định
-  const mucChiMacDinh = ["Di chuyển", "Ăn uống", "Lưu trú", "Giải trí", "Chi phí khác"];
+  const mucChiMacDinh = ["🚗 Di chuyển", "🍜 Ăn uống", "🛏️ Lưu trú", "🎉 Giải trí", "🧩 Chi phí khác"];
   mucChiMacDinh.forEach(ten => {
     db.run("INSERT OR IGNORE INTO DanhMuc (dm_ten) VALUES (?)", [ten]);
   });
