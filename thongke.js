@@ -134,7 +134,11 @@ function showStats(tourId) {
     ORDER BY DATE(ct_thoi_gian)
   `)[0]?.values || [];
 
-  const labels = dateStats.map(([date]) => date);
+  const labels = dateStats.map(([date]) => {
+    const [y, m, d] = date.split("-");
+    return `${d}-${m}-${y}`;
+  });
+
   const values = dateStats.map(([, amount]) => amount);
 
   renderDailyCharts(labels, values);
