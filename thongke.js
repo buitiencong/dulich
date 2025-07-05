@@ -142,6 +142,14 @@ function showStats(tourId) {
   const values = dateStats.map(([, amount]) => amount);
 
   renderDailyCharts(labels, values);
+  
+  // Khi người dùng đổi loại biểu đồ
+  document.querySelectorAll('input[name="chartType"]').forEach(radio => {
+    radio.addEventListener("change", () => {
+      renderDailyCharts(labels, values);
+    });
+  });
+
 }
 
 
@@ -163,63 +171,36 @@ function formatDateTime(dt) {
 // Biểu đồ
 let barChart, lineChart;
 
+let chartInstance;
+
 function renderDailyCharts(labels, values) {
-  // Hủy biểu đồ cũ nếu có
-  if (barChart) barChart.destroy();
-  if (lineChart) lineChart.destroy();
+  if (chartInstance) chartInstance.destroy();
 
-  const barCtx = document.getElementById("dailyBarChart").getContext("2d");
-  const lineCtx = document.getElementById("dailyLineChart").getContext("2d");
+  const ctx = document.getElementById("chartCanvas").getContext("2d");
 
-  barChart = new Chart(barCtx, {
-    type: "bar",
+  const selectedType = document.querySelector('input[name="chartType"]:checked')?.value || "bar";
+
+  chartInstance = new Chart(ctx, {
+    type: selectedType,
     data: {
       labels: labels,
       datasets: [{
         label: "Chi tiêu mỗi ngày",
         data: values,
-        backgroundColor: "#4e79a7"
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: "Biểu đồ cột – Chi tiêu theo ngày" },
-        tooltip: {
-          callbacks: {
-            label: ctx => `${ctx.parsed.y.toLocaleString("vi-VN")} ₫`
-          }
-        }
-      },
-      scales: {
-        y: {
-          ticks: {
-            callback: value => value.toLocaleString("vi-VN") + " ₫"
-          }
-        }
-      }
-    }
-  });
-
-  lineChart = new Chart(lineCtx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [{
-        label: "Chi tiêu mỗi ngày",
-        data: values,
+        backgroundColor: selectedType === "bar" ? "#4e79a7" : "rgba(242, 142, 43, 0.2)",
         borderColor: "#f28e2b",
-        backgroundColor: "rgba(242, 142, 43, 0.2)",
-        fill: true,
-        tension: 0.3
+        fill: selectedType === "line",
+        tension: selectedType === "line" ? 0.3 : 0
       }]
     },
     options: {
       responsive: true,
       plugins: {
         legend: { display: false },
-        title: { display: true, text: "Biểu đồ đường – Chi tiêu theo ngày" },
+        title: {
+          display: true,
+          text: selectedType === "bar" ? "Biểu đồ cột – Chi tiêu theo ngày" : "Biểu đồ đường – Chi tiêu theo ngày"
+        },
         tooltip: {
           callbacks: {
             label: ctx => `${ctx.parsed.y.toLocaleString("vi-VN")} ₫`
@@ -236,5 +217,6 @@ function renderDailyCharts(labels, values) {
     }
   });
 }
+
 
 
