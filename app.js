@@ -269,7 +269,8 @@ function loadTour(selectedTourId = null, selectedSubTab = 1) {
 
   let tours;
   try {
-    tours = db.exec("SELECT tour_id, tour_ten FROM Tour ORDER BY tour_ngay_di DESC");
+    // ✅ Sắp xếp tour mới nhất lên đầu (theo tour_id giảm dần)
+    tours = db.exec("SELECT tour_id, tour_ten FROM Tour ORDER BY tour_id DESC");
   } catch (err) {
     tabs.innerHTML = "<p>Lỗi: " + err.message + "</p>";
     return;
@@ -287,6 +288,7 @@ function loadTour(selectedTourId = null, selectedSubTab = 1) {
     tabBtn.dataset.tourId = tourId;
     tabBtn.onclick = () => switchTab(tourId);
 
+    // ✅ Nếu có selectedTourId → chọn tour đó. Nếu không → chọn tour đầu tiên (mới nhất)
     const isActive = selectedTourId ? tourId == selectedTourId : index === 0;
     if (isActive) tabBtn.classList.add("active");
 
@@ -297,13 +299,12 @@ function loadTour(selectedTourId = null, selectedSubTab = 1) {
     contentDiv.id = `tab-${tourId}`;
     contents.appendChild(contentDiv);
 
-    if (isActive) {
-      if (typeof showTourData === "function") {
-        showTourData(tourId, selectedSubTab);  // ✅ truyền tab cần chọn
-      }
+    if (isActive && typeof showTourData === "function") {
+      showTourData(tourId, selectedSubTab);
     }
   });
 }
+
 
 
 function switchTab(tourId) {
