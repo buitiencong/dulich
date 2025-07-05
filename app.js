@@ -1709,11 +1709,11 @@ function getLocalDatetimeInputValue() {
 
 // 🎯 Từ khoá gợi ý danh mục
 const tuKhoaDanhMuc = {
-  "Di chuyển": ["taxi", "grab", "xe", "xăng", "vé xe", "tàu", "máy bay", "ô tô", "xe điện", "xe ôm", "bus", "gửi xe", "đi lại", "di chuyển", "trạm", "cầu", "phà", "thuyền"],
-  "Ăn uống": ["ăn", "uống", "cơm", "phở", "bún", "nước", "trà", "cà phê", "đồ uống", "đồ ăn", "nhậu", "lẩu", "bánh mì", "nhà hàng", "buffet"],
-  "Lưu trú": ["khách sạn", "nghỉ", "homestay", "resort", "phòng"],
-  "Giải trí": ["vé", "tham quan", "chơi", "game", "xem", "karaoke", "công viên", "bảo tàng", "safari"],
-  "Chi phí khác": ["mua", "thuê", "khác", "chi thêm", "thuốc", "quà", "lưu niệm"]
+  "🚗 Di chuyển": ["taxi", "grab", "xe", "xăng", "vé xe", "tàu", "máy bay", "ô tô", "xe điện", "xe ôm", "bus", "gửi xe", "đi lại", "di chuyển", "trạm", "cầu", "phà", "thuyền"],
+  "🍜 Ăn uống": ["ăn", "uống", "cơm", "phở", "bún", "nước", "trà", "cà phê", "đồ uống", "đồ ăn", "nhậu", "lẩu", "bánh mì", "nhà hàng", "buffet"],
+  "🛏️ Lưu trú": ["khách sạn", "nghỉ", "homestay", "resort", "phòng"],
+  "🎉 Giải trí": ["vé", "tham quan", "chơi", "game", "xem", "karaoke", "công viên", "bảo tàng", "safari"],
+  "🧩 Chi phí khác": ["mua", "thuê", "khác", "chi thêm", "thuốc", "quà", "lưu niệm"]
 };
 
 // 🎯 Tự động gợi ý danh mục khi nhập tên khoản chi
