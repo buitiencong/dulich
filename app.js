@@ -1345,9 +1345,16 @@ function loadDanhMucToSelect() {
     const opt = document.createElement("option");
     opt.value = id;
     opt.textContent = ten;
+    
+    // ✅ Mặc định chọn "🧩 Chi phí khác"
+    if (ten.includes("🧩 Chi phí khác")) {
+      opt.selected = true;
+    }
+
     select.appendChild(opt);
   });
 }
+
 
 function submitChi() {
   const tourId = document.getElementById("chi-tour-select").value;
