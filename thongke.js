@@ -71,12 +71,10 @@ function showStats(tourId) {
       details.classList.toggle("open");
     };
 
-    // Dòng chữ tên danh mục
     const nameEl = document.createElement("div");
     nameEl.className = "category-name";
     nameEl.innerHTML = `${name}: <span style="font-weight: normal; color: green;">${amount.toLocaleString()} ₫</span> – ${percent}%`;
 
-    // Wrapper chứa progress, canh lề 1px giống header
     const progressWrapper = document.createElement("div");
     progressWrapper.style.paddingLeft = "0px";
     progressWrapper.style.paddingRight = "0px";
@@ -94,7 +92,6 @@ function showStats(tourId) {
     progress.appendChild(fill);
     progressWrapper.appendChild(progress);
 
-    // Gom vào topRow
     const topRow = document.createElement("div");
     topRow.style.display = "flex";
     topRow.style.flexDirection = "column";
@@ -102,7 +99,6 @@ function showStats(tourId) {
 
     topRow.appendChild(nameEl);
     topRow.appendChild(progressWrapper);
-
     header.appendChild(topRow);
 
     const details = document.createElement("div");
@@ -128,10 +124,21 @@ function showStats(tourId) {
     block.appendChild(details);
     container.appendChild(block);
   });
+
+  // ✅ Thống kê theo ngày
+  const dateStats = db.exec(`
+    SELECT DATE(ct_thoi_gian), SUM(ct_so_tien)
+    FROM ChiTieu
+    WHERE ct_tour_id = ${tourId}
+    GROUP BY DATE(ct_thoi_gian)
+    ORDER BY DATE(ct_thoi_gian)
+  `)[0]?.values || [];
+
+  const labels = dateStats.map(([date]) => date);
+  const values = dateStats.map(([, amount]) => amount);
+
+  renderDailyCharts(labels, values);
 }
-
-
-
 
 
 function formatDateTime(dt) {
@@ -146,6 +153,73 @@ function formatDateTime(dt) {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+  });
+}
+
+// Biểu đồ
+let barChart, lineChart;
+
+function renderDailyCharts(labels, values) {
+  // Hủy biểu đồ cũ nếu có
+  if (barChart) barChart.destroy();
+  if (lineChart) lineChart.destroy();
+
+  const barCtx = document.getElementById("dailyBarChart").getContext("2d");
+  const lineCtx = document.getElementById("dailyLineChart").getContext("2d");
+
+  barChart = new Chart(barCtx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Chi tiêu mỗi ngày",
+        data: values,
+        backgroundColor: "#4e79a7"
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: "Biểu đồ cột – Chi tiêu theo ngày" }
+      },
+      scales: {
+        y: {
+          ticks: {
+            callback: value => value.toLocaleString() + " ₫"
+          }
+        }
+      }
+    }
+  });
+
+  lineChart = new Chart(lineCtx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Chi tiêu mỗi ngày",
+        data: values,
+        borderColor: "#f28e2b",
+        backgroundColor: "rgba(242, 142, 43, 0.2)",
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: "Biểu đồ đường – Chi tiêu theo ngày" }
+      },
+      scales: {
+        y: {
+          ticks: {
+            callback: value => value.toLocaleString() + " ₫"
+          }
+        }
+      }
+    }
   });
 }
 

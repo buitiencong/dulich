@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
     body { padding: 20px; background: rgba(142, 197, 252, 1.000) }
@@ -180,5 +181,12 @@
   </div>
 
   <script src="thongke.js"></script>
+
+  <div class="section">
+    <h2>Thống kê theo ngày</h2>
+    <canvas id="dailyBarChart" style="max-width: 100%; margin-bottom: 20px;"></canvas>
+    <canvas id="dailyLineChart" style="max-width: 100%;"></canvas>
+  </div>
+
 </body>
 </html>
