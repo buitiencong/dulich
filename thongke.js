@@ -17,19 +17,30 @@ initSqlJs({
 function loadTourList() {
   const result = db.exec("SELECT tour_id, tour_ten FROM Tour ORDER BY tour_ngay_di DESC");
   const select = document.getElementById("tourSelect");
+
   result[0]?.values.forEach(([id, name]) => {
     const option = document.createElement("option");
     option.value = id;
     option.textContent = name;
     select.appendChild(option);
   });
+
   select.addEventListener("change", () => showStats(parseInt(select.value)));
 
-  if (result[0]?.values.length > 0) {
-    select.value = result[0].values[0][0];
-    showStats(result[0].values[0][0]);
+  // ✅ Đọc tourId từ URL nếu có
+  const params = new URLSearchParams(window.location.search);
+  const selectedId = parseInt(params.get("tourId"));
+
+  // Nếu có tourId hợp lệ → chọn nó, ngược lại dùng tour đầu tiên
+  const tourIds = result[0]?.values.map(([id]) => id);
+  const validId = tourIds.includes(selectedId) ? selectedId : tourIds[0];
+
+  if (validId) {
+    select.value = validId;
+    showStats(validId);
   }
 }
+
 
 function showStats(tourId) {
   const tvCount = db.exec(`SELECT COUNT(*) FROM ThanhVien WHERE tv_tour_id = ${tourId}`)[0]?.values[0][0] || 0;

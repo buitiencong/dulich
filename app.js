@@ -1738,3 +1738,15 @@ function goiYDanhMucTuDong() {
     if (timThay) break;
   }
 }
+
+// Menu Thống kê
+function goToThongKe() {
+  const activeTab = document.querySelector(".tab-button.active");
+  if (!activeTab) {
+    location.href = "thongke.html";
+    return;
+  }
+
+  const tourId = activeTab.dataset.tourId;
+  location.href = `thongke.html?tourId=${tourId}`;
+}
