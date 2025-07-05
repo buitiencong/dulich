@@ -185,12 +185,17 @@ function renderDailyCharts(labels, values) {
       responsive: true,
       plugins: {
         legend: { display: false },
-        title: { display: true, text: "Biểu đồ cột – Chi tiêu theo ngày" }
+        title: { display: true, text: "Biểu đồ cột – Chi tiêu theo ngày" },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.parsed.y.toLocaleString("vi-VN")} ₫`
+          }
+        }
       },
       scales: {
         y: {
           ticks: {
-            callback: value => value.toLocaleString() + " ₫"
+            callback: value => value.toLocaleString("vi-VN") + " ₫"
           }
         }
       }
@@ -214,16 +219,22 @@ function renderDailyCharts(labels, values) {
       responsive: true,
       plugins: {
         legend: { display: false },
-        title: { display: true, text: "Biểu đồ đường – Chi tiêu theo ngày" }
+        title: { display: true, text: "Biểu đồ đường – Chi tiêu theo ngày" },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.parsed.y.toLocaleString("vi-VN")} ₫`
+          }
+        }
       },
       scales: {
         y: {
           ticks: {
-            callback: value => value.toLocaleString() + " ₫"
+            callback: value => value.toLocaleString("vi-VN") + " ₫"
           }
         }
       }
     }
   });
 }
+
 
